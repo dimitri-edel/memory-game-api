@@ -1,2 +1,2 @@
 .env
-memory_game-api/env.py
+memory_game_api/env.py
