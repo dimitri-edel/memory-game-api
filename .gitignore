@@ -1,2 +1,3 @@
-.env
-memory_game_api/env.py
+.env/
+memory_game_api/.env.py
+memory_game_api/__pycache__/
