@@ -6,7 +6,7 @@ from .models import Playlist
 from .serializers import PlaylistSerializer
 from rest_framework.parsers import MultiPartParser, FormParser
 
-class PlayListPostView(APIView):
+class PlaylistPostView(APIView):
     '''Post view for Playlist model'''
     parser_classes = (MultiPartParser, FormParser)
     def post(self, request):
