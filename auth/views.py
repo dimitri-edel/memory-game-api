@@ -15,21 +15,10 @@ class UserLoginView(APIView):
         '''Post method for User model'''
         username = request.data.get('username')
         password = request.data.get('password')
-        user = User(usernameHash=username, passwordHash=password)
+        user = User(username=username, password=password)
         if not user.login():
             return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
        
         # Create a response with two tokens. The tokens are hashed values of the username and password.
-        response = Response(status=status.HTTP_200_OK, data={'token1': username, 'token2': password})
+        response = Response(status=status.HTTP_200_OK, data={'token1': user.get_token1(), 'token2': user.get_token2()})
         return response
-
-class UserLogoutView(APIView):
-    '''Logout view for User model'''
-    def post(self, request):
-        '''Post method for User model'''
-        username = request.data.get('token1')
-        password = request.data.get('token2')
-        user = User(usernameHash=username, passwordHash=password)
-        user.logout()
-        return Response(status=status.HTTP_200_OK)
-
