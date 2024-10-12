@@ -7,7 +7,7 @@ from .views import PlaylistDeleteItemView
 
 urlpatterns = [
     path('post/', PlaylistPostView.as_view(), name='playlist_post_view'),
-    path('get/<str:category>/api_key', PlaylistGetView.as_view(), name='playlist_get_view'),    
+    path('get/<str:category>/<str:api_key>', PlaylistGetView.as_view(), name='playlist_get_view'),    
     path('delete/<str:category>/', PlaylistDeleteCategoryView.as_view(), name='playlist_delete_category_view'),
     path('delete/<int:id>/', PlaylistDeleteItemView.as_view(), name='playlist_delete_item_view'),
 ]
