@@ -5,6 +5,7 @@ from rest_framework import status
 from .models import Playlist
 from .serializers import PlaylistSerializer
 from rest_framework.parsers import MultiPartParser, FormParser
+import os
 
 class PlaylistPostView(APIView):
     '''Post view for Playlist model'''
@@ -19,9 +20,10 @@ class PlaylistPostView(APIView):
     
 class PlaylistGetView(APIView):
     # get all items from playlist that are in the category that has been passed in the url
-    def get(self, request, category):
+    def get(self, request, category, api_key):
         '''Get method for Playlist model'''
-        print(category)
+        if(api_key != os.environ["API_KEY"]):
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
         playlist = Playlist.objects.filter(category=category)
         playlist_serializer = PlaylistSerializer(playlist, many=True)
         return Response(playlist_serializer.data)
