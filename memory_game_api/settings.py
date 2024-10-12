@@ -16,9 +16,6 @@ import os
 if os.path.exists("memory_game_api/env.py"):
     from .env import *
 
-# Test
-from .authentication import *
-print(hash_password(os.environ["ADMIN_PASSWORD"]))
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
