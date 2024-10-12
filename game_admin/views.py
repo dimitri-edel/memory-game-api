@@ -15,8 +15,8 @@ class UserLoginView(APIView):
         '''Post method for User model'''
         username = request.data.get('username')
         password = request.data.get('password')
-        user = User(username=username, password=password)
-        if not user.login():
+        user = User()
+        if not user.login(username, password):
             return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
        
         # Create a response with two tokens. The tokens are hashed values of the username and password.

@@ -3,15 +3,13 @@ import os
 
 class User:
     def __init__(self):
-        self.username = None
-        self.password = None        
         self.token1 = None
         self.token2 = None
 
-    def login(self,username, password):
+    def login(self, username, password):
         if username == os.environ[
             "ADMIN_USERNAME"
-        ] and password == os.environ["ADMIN_PASSWORD"]:
+        ] and password == os.environ["ADMIN_PASSWORD"]:           
             self.token1 = self.md5hash(username)
             self.token2 = self.md5hash(password)
             return True
@@ -23,10 +21,10 @@ class User:
         return False
     
     # md5 hash algorithm
-    def md5hash(password):        
-        hash_value = md5(password.encode())
+    def md5hash(self, raw):          
+        hash_value = md5(raw.encode())
         final_value = hash_value.hexdigest()
-        return final_value   
+        return final_value
 
     def get_token1(self):
         return self.token1
