@@ -23,7 +23,7 @@ class PlaylistPostView(APIView):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         
         print("request.data", request.data) 
-        
+
         '''Post method for Playlist model'''
         playlist_serializer = PlaylistSerializer(data=request.data)
         if playlist_serializer.is_valid():
@@ -47,8 +47,8 @@ class PlaylistDeleteCategoryView(APIView):
     def delete(self, request, category):
          # Get token1 and token2 from the request headers
         # If the tokens are not valid, return a access denied response
-        token1 = request.headers.get('token1')
-        token2 = request.headers.get('token2')
+        token1 = request.headers.get('Token1')
+        token2 = request.headers.get('Token2')
         user = User()
         if not user.is_authorized(token1, token2):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
@@ -63,8 +63,8 @@ class PlaylistDeleteItemView(APIView):
     def delete(self, request, id):
          # Get token1 and token2 from the request headers
         # If the tokens are not valid, return a access denied response
-        token1 = request.headers.get('token1')
-        token2 = request.headers.get('token2')
+        token1 = request.headers.get('Token1')
+        token2 = request.headers.get('Token2')
         user = User()
         if not user.is_authorized(token1, token2):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
