@@ -72,3 +72,22 @@ class PlaylistDeleteItemView(APIView):
         playlist = Playlist.objects.filter(id=id)
         playlist.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+class PlaylistUpdateItemView(APIView):
+    '''Update view for Playlist model'''
+    '''Update the item from playlist that has been passed in the url'''
+    def put(self, request, id):
+         # Get token1 and token2 from the request headers
+        # If the tokens are not valid, return a access denied response
+        token1 = request.headers.get('Token1')
+        token2 = request.headers.get('Token2')
+        user = User()
+        if not user.is_authorized(token1, token2):
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        '''Update item from the Playlist'''
+        playlist = Playlist.objects.get(id=id)
+        playlist_serializer = PlaylistSerializer(playlist, data=request.data)
+        if playlist_serializer.is_valid():
+            playlist_serializer.save()
+            return Response(playlist_serializer.data)
+        return Response(playlist_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
