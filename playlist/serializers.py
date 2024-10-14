@@ -11,4 +11,8 @@ class PlaylistSerializer(serializers.ModelSerializer):
     class Meta:
         model = Playlist
         fields = '__all__'
+        extra_kwargs = {
+            'audio': {'required': False, 'allow_null': True},
+            'image': {'required': False, 'allow_null': True},
+        }
 

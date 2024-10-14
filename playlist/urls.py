@@ -5,8 +5,10 @@ from .views import PlaylistGetView
 from .views import PlaylistDeleteCategoryView
 from .views import PlaylistDeleteItemView
 from .views import PlaylistUpdateItemView
+from .views import PlaylistGetAllView
 
 urlpatterns = [
+    path('get-all/<str:filter>/<str:api_key>', PlaylistGetAllView.as_view(), name='playlist_get_all_view'),
     path('post/', PlaylistPostView.as_view(), name='playlist_post_view'),
     path('get/<str:category>/<str:api_key>', PlaylistGetView.as_view(), name='playlist_get_view'),    
     path('delete-category/<str:category>/', PlaylistDeleteCategoryView.as_view(), name='playlist_delete_category_view'),

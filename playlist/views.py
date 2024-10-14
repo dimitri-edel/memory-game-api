@@ -8,6 +8,21 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from game_admin.authentication import User
 import os
 
+''' A class for retrieving all the items from the Playlist model
+ and if a filter is passed in the url, it will return all the items
+   from the Playlist model whose category, title or description contains the filter'''
+class PlaylistGetAllView(APIView):
+    '''Get method for Playlist model'''
+    def get(self, request, filter, api_key):
+        if(api_key != os.environ["API_KEY"]):
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        '''Get all items from the Playlist model'''
+        playlist = Playlist.objects.all()
+        if filter != 'none':
+            playlist = Playlist.objects.filter(category__contains=filter) | Playlist.objects.filter(title__contains=filter) | Playlist.objects.filter(description__contains=filter)
+        playlist_serializer = PlaylistSerializer(playlist, many=True)
+        return Response(playlist_serializer.data)
+
 class PlaylistPostView(APIView):
     '''Post view for Playlist model'''
     parser_classes = (MultiPartParser, FormParser)
