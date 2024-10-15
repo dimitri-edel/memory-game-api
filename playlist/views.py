@@ -77,7 +77,13 @@ class PlaylistGetAllView(APIView):
         '''Get all items from the Playlist model'''
         playlist = Playlist.objects.all()
         if filter != 'none':
-            playlist = Playlist.objects.filter(category__contains=filter) | Playlist.objects.filter(title__contains=filter) | Playlist.objects.filter(description__contains=filter)
+            playlist = Playlist.objects.filter(
+                category__name__icontains=filter
+            ) | Playlist.objects.filter(
+                title__icontains=filter
+            ) | Playlist.objects.filter(
+                description__icontains=filter
+            )
         playlist_serializer = PlaylistSerializer(playlist, many=True)
         return Response(playlist_serializer.data)
 
