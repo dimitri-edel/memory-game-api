@@ -9,6 +9,7 @@ from .serializers import PlaylistSerializer
 from rest_framework.parsers import MultiPartParser, FormParser
 from game_admin.authentication import User
 import os
+from memory_game_api.settings import API_MEDIA_STORAGE
 
 ''' A class for retrieiving all the items from the Category model'''
 class CategoryGetAllView(APIView):
@@ -64,10 +65,12 @@ class CategoryDeleteView(APIView):
         '''Delete method for Category model'''
         category = Category.objects.get(id=id)
         category.delete()
-        # Delete the image file from the media folder
-        media_path = os.path.join(os.getcwd(), 'media', category.image.name)
-        if os.path.exists(media_path):
-            os.remove(media_path)
+        # If the API_MEDIA_STORAGE (in settings.py) is set to MEDIA_FOLDER, delete the image file from the media folder
+        if API_MEDIA_STORAGE == 'MEDIA_FOLDER':
+            # Delete the image file from the media folder
+            media_path = os.path.join(os.getcwd(), 'media', category.image.name)
+            if os.path.exists(media_path):
+                os.remove(media_path)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 ''' A class for retrieving all the items from the Playlist model
@@ -154,10 +157,15 @@ class PlaylistDeleteItemView(APIView):
         '''Delete item from the Playlist'''        
         playlist = Playlist.objects.filter(id=id)
         playlist.delete()
-        # Delete the image file from the media folder
-        media_path = os.path.join(os.getcwd(), 'media', playlist.image.name)
-        if os.path.exists(media_path):
-            os.remove(media_path)
+        ''' If the API_MEDIA_STORAGE (in settings.py) is set to MEDIA_FOLDER, delete the image and audio files from the media folder'''
+        if API_MEDIA_STORAGE == 'MEDIA_FOLDER':
+            # Delete the image and audio files from the media folder
+            media_image_path = os.path.join(os.getcwd(), 'media', playlist.image.name)
+            if os.path.exists(media_image_path):
+                os.remove(media_image_path)
+            media_audio_path = os.path.join(os.getcwd(), 'media', playlist.audio.name)
+            if os.path.exists(media_audio_path):
+                os.remove(media_audio_path)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 class PlaylistUpdateItemView(APIView):
