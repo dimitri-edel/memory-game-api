@@ -35,6 +35,9 @@ class Playlist(models.Model):
     '''description of the item in the playlist'''
     image = models.ImageField(upload_to='images/', validators=[FileExtensionValidator(['png', 'jpg', 'jpeg'])])
     '''image of the item in the playlist'''
+    # field quiz contain a json file that contain the quiz questions and answers
+    quiz = models.FileField(upload_to='json/', validators=[FileExtensionValidator(['json'])])
+    '''quiz of the item in the playlist'''
     
 
     # Metadata

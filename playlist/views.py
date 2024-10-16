@@ -166,6 +166,9 @@ class PlaylistDeleteItemView(APIView):
             media_audio_path = os.path.join(os.getcwd(), 'media', playlist.audio.name)
             if os.path.exists(media_audio_path):
                 os.remove(media_audio_path)
+            media_quiz_path = os.path.join(os.getcwd(), 'media', playlist.quiz.name)
+            if os.path.exists(media_quiz_path):
+                os.remove(media_quiz_path)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 class PlaylistUpdateItemView(APIView):
