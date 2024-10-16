@@ -64,6 +64,10 @@ class CategoryDeleteView(APIView):
         '''Delete method for Category model'''
         category = Category.objects.get(id=id)
         category.delete()
+        # Delete the image file from the media folder
+        media_path = os.path.join(os.getcwd(), 'media', category.image.name)
+        if os.path.exists(media_path):
+            os.remove(media_path)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 ''' A class for retrieving all the items from the Playlist model
@@ -150,6 +154,10 @@ class PlaylistDeleteItemView(APIView):
         '''Delete item from the Playlist'''        
         playlist = Playlist.objects.filter(id=id)
         playlist.delete()
+        # Delete the image file from the media folder
+        media_path = os.path.join(os.getcwd(), 'media', playlist.image.name)
+        if os.path.exists(media_path):
+            os.remove(media_path)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 class PlaylistUpdateItemView(APIView):
