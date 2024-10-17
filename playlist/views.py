@@ -62,22 +62,6 @@ class PlaylistGetView(APIView):
         playlist = Playlist.objects.filter(category=category)
         playlist_serializer = PlaylistSerializer(playlist, many=True)
         return Response(playlist_serializer.data)
-    
-class PlaylistDeleteCategoryView(APIView):
-    '''Delete view for Playlist model'''
-    '''Delete all items from playlist that are in the category that has been passed in the url'''
-    def delete(self, request, category):
-         # Get token1 and token2 from the request headers
-        # If the tokens are not valid, return a access denied response
-        token1 = request.headers.get('Token1')
-        token2 = request.headers.get('Token2')
-        user = User()
-        if not user.is_authorized(token1, token2):
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
-        '''Delete category from the Playlist'''
-        playlist = Playlist.objects.filter(category=category)
-        playlist.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class PlaylistDeleteItemView(APIView):
     '''Delete view for Playlist model'''
