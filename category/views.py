@@ -31,7 +31,7 @@ class CategoryGetView(APIView):
         return Response(category_serializer.data)
 
 ''' A class for posting the item to the Category model'''
-class CategoryPostView(APIView):
+class CategoryAddView(APIView):
     '''Post method for Category model'''
     def post(self, request):
         # Get token1 and token2 from the request headers

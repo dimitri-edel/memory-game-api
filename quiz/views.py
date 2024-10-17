@@ -24,3 +24,36 @@ class QuizListView(APIView):
             ) 
         quiz_serializer = QuizSerializer(quiz, many=True)
         return Response(quiz_serializer.data)
+
+''' A class for adding a new quiz to the Quiz model.
+    The user must be authorized to add a new quiz.
+    The user must have the correct tokens in the request headers to be authorized.
+    If the user tries to add a quiz without the correct tokens, they will receive a 401 unauthorized response.
+    If the user tries to add a quiz with the correct tokens, the quiz will be added to the Quiz model.
+    If the quiz is added successfully, the user will receive a 201 created response.
+    If the quiz is not added successfully, the user will receive a 400 bad request response.
+    If the user tries to add a quiz that already exists in the Quiz model, the user will receive a 404 Alredy exists repoonse.'''
+class QuizAddView(APIView):
+    '''Post view for Quiz model'''
+    parser_classes = (MultiPartParser, FormParser)
+    def post(self, request): 
+        # Get token1 and token2 from the request headers
+        # If the tokens are not valid, return a access denied response
+        token1 = request.headers.get('Token1')
+        token2 = request.headers.get('Token2')
+        
+        user = User()        
+
+        if not user.is_authorized(token1, token2):
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        
+        '''Post method for Quiz model'''
+        quiz_serializer = QuizSerializer(data=request.data)
+        '''If the quiz for the submitted category already exists in the Quiz model, return a 404 Already exists response'''
+        if Quiz.objects.filter(title=request.data['category']).exists():
+            return Response(status=status.HTTP_404_ALREADY_EXISTS)
+        '''If the quiz is valid, save the quiz and return a 201 created response'''
+        if quiz_serializer.is_valid():
+            quiz_serializer.save()
+            return Response(quiz_serializer.data, status=status.HTTP_201_CREATED)
+        return Response(quiz_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
