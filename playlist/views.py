@@ -30,7 +30,7 @@ class PlaylistGetAllView(APIView):
         playlist_serializer = PlaylistSerializer(playlist, many=True)
         return Response(playlist_serializer.data)
 
-class PlaylistPostView(APIView):
+class PlaylistAddView(APIView):
     '''Post view for Playlist model'''
     parser_classes = (MultiPartParser, FormParser)
     def post(self, request): 
