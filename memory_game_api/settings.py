@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "corsheaders",
     "category",
-    "playlist",    
+    "playlist", 
+    "quiz",   
 ]
 
 MIDDLEWARE = [

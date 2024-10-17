@@ -24,6 +24,7 @@ urlpatterns = [
     path('category/', include('category.urls')),
     path('playlist/', include('playlist.urls')),    
     path('game_admin/', include('game_admin.urls')),
+    path('quiz/', include('quiz.urls')),
 ]
 
 if settings.DEBUG:
