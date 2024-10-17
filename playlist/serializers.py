@@ -5,21 +5,6 @@
 
 from rest_framework import serializers
 from .models import Playlist
-from .models import Category
-
-class CategorySerializer(serializers.ModelSerializer):
-    '''Serializer for Category model'''
-    playlist_count = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Category
-        fields = '__all__'
-        extra_kwargs = {
-            'image': {'required': False, 'allow_null': True},
-        }
-
-    def get_playlist_count(self, obj):
-        return Playlist.objects.filter(category=obj).count()
 
 
 class PlaylistSerializer(serializers.ModelSerializer):

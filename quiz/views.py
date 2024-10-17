@@ -57,3 +57,15 @@ class QuizAddView(APIView):
             quiz_serializer.save()
             return Response(quiz_serializer.data, status=status.HTTP_201_CREATED)
         return Response(quiz_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+''' A class for updating a quiz in the Quiz model.'''
+class QuizUpdateView(APIView):
+    '''Put method for Quiz model'''
+    parser_classes = (MultiPartParser, FormParser)
+    def put(self, request, id):
+        '''Put method for Quiz model'''
+        quiz = Quiz.objects.get(id=id)
+        quiz_serializer = QuizSerializer(quiz, data=request.data)
+        if quiz_serializer.is_valid():
+            quiz_serializer.save()
+            return Response(quiz_serializer.data)
+        return Response(quiz_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
