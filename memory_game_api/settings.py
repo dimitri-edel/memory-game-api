@@ -47,8 +47,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "corsheaders",
-    "playlist",
-    "game_admin",
+    "category",
+    "playlist",    
 ]
 
 MIDDLEWARE = [

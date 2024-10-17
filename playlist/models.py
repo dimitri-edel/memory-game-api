@@ -9,7 +9,7 @@ class Category(models.Model):
     '''name of the category'''
     description = models.TextField()
     '''description of the category'''
-    image = models.ImageField(upload_to='images/', validators=[FileExtensionValidator(['png', 'jpg', 'jpeg'])])
+    image = models.ImageField(upload_to='images/', validators=[FileExtensionValidator(['png', 'jpg', 'jpeg', 'webp'])])
     '''image of the category'''
 
     # Metadata
@@ -33,7 +33,7 @@ class Playlist(models.Model):
     '''title of the item in the playlist'''
     description = models.TextField()
     '''description of the item in the playlist'''
-    image = models.ImageField(upload_to='images/', validators=[FileExtensionValidator(['png', 'jpg', 'jpeg'])])
+    image = models.ImageField(upload_to='images/', validators=[FileExtensionValidator(['png', 'jpg', 'jpeg','webp'])])
     '''image of the item in the playlist'''
     # field quiz contain a json file that contain the quiz questions and answers
     quiz = models.FileField(upload_to='json/', validators=[FileExtensionValidator(['json'])])

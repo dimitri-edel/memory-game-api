@@ -43,14 +43,33 @@ class CategoryPostView(APIView):
         token2 = request.headers.get('Token2')
         user = User()
         if not user.is_authorized(token1, token2):
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
+            return Response(status=status.HTTP_401_UNAUTHORIZED)        
         '''Post method for Category model'''
         category_serializer = CategorySerializer(data=request.data)
         if category_serializer.is_valid():
             category_serializer.save()
             return Response(category_serializer.data, status=status.HTTP_201_CREATED)
         return Response(category_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
+''' A class for updating the item from the Category model that has been passed in the url'''
+class CategoryUpdateView(APIView):
+    '''Put method for Category model'''
+    def put(self, request, id):
+        # Get token1 and token2 from the request headers
+        # If the tokens are not valid, return a access denied response
+        token1 = request.headers.get('Token1')
+        token2 = request.headers.get('Token2')
+        user = User()
+        if not user.is_authorized(token1, token2):
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        '''Put method for Category model'''
+        category = Category.objects.get(id=id)
+        category_serializer = CategorySerializer(category, data=request.data)
+        if category_serializer.is_valid():
+            category_serializer.save()
+            return Response(category_serializer.data)
+        return Response(category_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+      
 ''' A class for deleting the item from the Category model that has been passed in the url'''
 class CategoryDeleteView(APIView):
     '''Delete method for Category model'''
