@@ -62,6 +62,15 @@ class QuizUpdateView(APIView):
     '''Put method for Quiz model'''
     parser_classes = (MultiPartParser, FormParser)
     def put(self, request, id):
+         # Get token1 and token2 from the request headers
+        # If the tokens are not valid, return a access denied response
+        token1 = request.headers.get('Token1')
+        token2 = request.headers.get('Token2')
+        
+        user = User()        
+
+        if not user.is_authorized(token1, token2):
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
         '''Put method for Quiz model'''
         quiz = Quiz.objects.get(id=id)
         quiz_serializer = QuizSerializer(quiz, data=request.data)
@@ -69,3 +78,29 @@ class QuizUpdateView(APIView):
             quiz_serializer.save()
             return Response(quiz_serializer.data)
         return Response(quiz_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+''' A class for deleting a quiz from the Quiz model.'''
+class QuizDeleteView(APIView):
+    '''Delete method for Quiz model'''
+    def delete(self, request, id):
+        '''Delete method for Quiz model'''
+         # Get token1 and token2 from the request headers
+        # If the tokens are not valid, return a access denied response
+        token1 = request.headers.get('Token1')
+        token2 = request.headers.get('Token2')
+        
+        user = User()        
+
+        if not user.is_authorized(token1, token2):
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        
+        quiz = Quiz.objects.get(id=id)
+
+        if API_MEDIA_STORAGE == 'MEDIA_FOLDER':
+            '''If the quiz is deleted, delete the media file associated with the quiz'''
+            media_json_path = os.path.join(os.getcwd(), 'media', str(quiz.json))
+            if os.path.exists(media_json_path):
+                os.remove(media_json_path)
+        '''Delete the quiz'''
+        quiz.delete()
+        '''Return a 204 no content response'''
+        return Response(status=status.HTTP_204_NO_CONTENT)
