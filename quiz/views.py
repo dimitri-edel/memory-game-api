@@ -52,7 +52,7 @@ class QuizAddView(APIView):
         quiz_serializer = QuizSerializer(data=request.data)
         '''If the quiz for the submitted category already exists in the Quiz model, return a 404 Already exists response'''
         if Quiz.objects.filter(category=request.data['category']).exists():
-            return Response(status=status.HTTP_404_ALREADY_EXISTS)
+            return Response(status=status.HTTP_409_CONFLICT)
         '''If the quiz is valid, save the quiz and return a 201 created response'''
         if quiz_serializer.is_valid():
             quiz_serializer.save()
@@ -99,8 +99,11 @@ class QuizDeleteView(APIView):
         if API_MEDIA_STORAGE == 'MEDIA_FOLDER':
             '''If the quiz is deleted, delete the media file associated with the quiz'''
             media_json_path = os.path.join(os.getcwd(), 'media', str(quiz.json))
-            if os.path.exists(media_json_path):
+            print("Deleting media file atempt: ", media_json_path)
+            if os.path.exists(media_json_path):                
                 os.remove(media_json_path)
+            else:
+                print("The file does not exist")
         '''Delete the quiz'''
         quiz.delete()
         '''Return a 204 no content response'''

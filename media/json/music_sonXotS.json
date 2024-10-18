@@ -1,4 +1,4 @@
-{
+[
     {
         "question": "On which instrument is a Nocturne usually played?",
         "answer": "Piano",
@@ -1288,5 +1288,5 @@
             "Moderate",
             "Variable"
         ]
-    },
-}
+    }
+]
