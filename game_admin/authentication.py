@@ -9,14 +9,16 @@ class User:
     def login(self, username, password):
         if username == os.environ[
             "ADMIN_USERNAME"
-        ] and password == os.environ["ADMIN_PASSWORD"]:           
-            self.token1 = self.md5hash(username)
-            self.token2 = self.md5hash(password)
+        ] and password == os.environ["ADMIN_PASSWORD"]:  
+            os.environ["ADMIN_TOKEN_1"] = self.generateToken()
+            os.environ["ADMIN_TOKEN_2"] = self.generateToken()         
+            self.token1 = os.environ["ADMIN_TOKEN_1"]
+            self.token2 = os.environ["ADMIN_TOKEN_2"]            
             return True
         return False
 
     def is_authorized(self, token1, token2):
-        if(token1 == self.md5hash(os.environ["ADMIN_USERNAME"]) and token2 == self.md5hash(os.environ["ADMIN_PASSWORD"])):
+        if(token1 == os.environ["ADMIN_TOKEN_1"]) and token2 == os.environ["ADMIN_TOKEN_2"]:
             return True
         return False
     
@@ -33,6 +35,10 @@ class User:
         return self.token2
 
    # Logout will be handled by the client, by removing the tokens from local storage or cookies
+
+    def generateToken(self):
+        # generate a random string 20 characters long
+        return os.urandom(20).hex()
 
     def __str__(self):
         return f"User: {self.username}"
