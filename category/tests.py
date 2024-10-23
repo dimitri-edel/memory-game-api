@@ -18,6 +18,17 @@ class test_category_get_all(APITestCase):
     def test_get_all_categories(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+# Test case for CategoryGetAllView with invalid api key
+class test_category_get_all_invalid_api_key(APITestCase):
+    def setUp(self):
+        self.user = User()
+        self.user.login(os.environ["ADMIN_USERNAME"], os.environ["ADMIN_PASSWORD"])
+        self.api_key = "invalid api key"
+        self.url = reverse('category_get_all', kwargs={'api_key': self.api_key})
+
+    def test_get_all_categories(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 # Test case for CategoryAddView with valid data
 class test_category_add_valid_data(APITestCase):

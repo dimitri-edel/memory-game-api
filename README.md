@@ -45,10 +45,13 @@ Or in the DB-Management tool. I did it with pgAdmin.
 
 All automated tests are defined in test.py of each app.
 
-### Tested views
+### Authorization
 
-game_admin.UserLoginView 
+| View class      | URL pattern | Tested case     |
+| :---        |    :----:   |          ---: |
+| **game_admin.UserLoginView** | **admin/login/** | login with valid credentials |
+| | | login with invalid credentials |
 
-URL: **admin/login/**
+
 
 
