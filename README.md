@@ -7,16 +7,35 @@ Pillow
 
 ## URLs
 
-<details>
-    <summary>List of URLs</summary>
+### Admin
 
-    - admin/login/
-    - category/get-all/<str:api_key>
-    - category/add/
-    - category/update/<int:id>/
-    - category/delete/<int:id>/
-    
-</details>
+**admin/login/**
+
+### Category API
+
+**category/get-all/<str:api_key>**
+
+### Category Admin
+
+**category/add/**
+
+**category/update/<int:id>/**
+
+**category/delete/<int:id>/**
+
+### Playlist API
+
+### Playlist Admin
+
+### Quiz API
+
+### Quiz Admin
+
+
+
+
+
+
 
 ## AUTOMATED TESTS
 The testing creates a database for testing purposes, which is destroyed at the end of the testing.
@@ -27,4 +46,9 @@ Or in the DB-Management tool. I did it with pgAdmin.
 All automated tests are defined in test.py of each app.
 
 ### Tested views
+
+game_admin.UserLoginView 
+
+URL: **admin/login/**
+
 
