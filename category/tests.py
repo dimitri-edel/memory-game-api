@@ -32,7 +32,7 @@ class test_category_add_valid_data(APITestCase):
         data = {
             "name": "Test Category",
             "description": "This is a test category",
-            "image" : open("media/images/Bach.png", "rb")
+            "image" : open("media/images/test/test.png", "rb")
         }
         response = self.client.post(self.url, data, HTTP_TOKEN1=self.token1, HTTP_TOKEN2=self.token2)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -51,6 +51,8 @@ class test_category_add_invalid_data(APITestCase):
             "description": ""
         }
         response = self.client.post(self.url, data, HTTP_TOKEN1=self.token1, HTTP_TOKEN2=self.token2)
+        if response.status_code == status.HTTP_201_CREATED:
+            clean_up_after_uploading_image()
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 # Test case for CategoryUpdateView with invalid tokens
 class test_category_add_invalid_tokens(APITestCase):
@@ -82,10 +84,12 @@ class test_category_update_valid_data(APITestCase):
         data = {
             "name": "Test Category",
             "description": "This is a test category",
-            "image" : open("media/images/Bach.png", "rb")
+            "image" : open("media/images/test/test.png", "rb")
         }
         response = self.client.post(url_add_dataset, data, HTTP_TOKEN1=self.token1, HTTP_TOKEN2=self.token2)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        if response.status_code == status.HTTP_201_CREATED:
+            clean_up_after_uploading_image()
         self.dataset_id = response.data["id"]        
         return response.data["id"]
     
@@ -94,10 +98,12 @@ class test_category_update_valid_data(APITestCase):
         data = {
             "name": "Test Category",
             "description": "This is a test category",
-            "image" : open("media/images/Bach.png", "rb")
+            "image" : open("media/images/test/test.png", "rb")
         }
 
         response = self.client.put(self.url, data, HTTP_TOKEN1=self.token1, HTTP_TOKEN2=self.token2)
+        if response.status_code == status.HTTP_200_OK:
+            clean_up_after_uploading_image()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 # Test case for CategoryUpdateView with invalid data
 class test_category_update_invalid_data(APITestCase):
@@ -117,10 +123,12 @@ class test_category_update_invalid_data(APITestCase):
         data = {
             "name": "Test Category",
             "description": "This is a test category",
-            "image" : open("media/images/Bach.png", "rb")
+            "image" : open("media/images/test/test.png", "rb")
         }
         response = self.client.post(url_add_dataset, data, HTTP_TOKEN1=self.token1, HTTP_TOKEN2=self.token2)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        if response.status_code == status.HTTP_201_CREATED:
+            clean_up_after_uploading_image()
         self.dataset_id = response.data["id"]        
         return response.data["id"]
     
@@ -164,10 +172,12 @@ class test_category_delete_valid_data(APITestCase):
         data = {
             "name": "Test Category",
             "description": "This is a test category",
-            "image" : open("media/images/Bach.png", "rb")
+            "image" : open("media/images/test/test.png", "rb")
         }
         response = self.client.post(url_add_dataset, data, HTTP_TOKEN1=self.token1, HTTP_TOKEN2=self.token2)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        if response.status_code == status.HTTP_201_CREATED:
+            clean_up_after_uploading_image()
         self.dataset_id = response.data["id"]        
         return response.data["id"]
     
@@ -177,8 +187,15 @@ class test_category_delete_valid_data(APITestCase):
 # Test case for CategoryDeleteView with invalid tokens
 class test_category_delete_invalid_tokens(APITestCase):
     def setUp(self):
-        self.url = reverse('category_delete', kwargs={'id': 1})
+        self.url = reverse('category_delete', kwargs={'id': 1})        
 
     def test_delete_category(self):
         response = self.client.delete(self.url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+def clean_up_after_uploading_image():
+    ''' Clean up the image file after uploading it '''
+    # Delete the image file from the media folder
+    media_path = os.path.join(os.getcwd(), 'media', 'images', 'test.png')
+    if os.path.exists(media_path):
+        os.remove(media_path)
