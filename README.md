@@ -45,13 +45,32 @@ Or in the DB-Management tool. I did it with pgAdmin.
 
 All automated tests are defined in test.py of each app.
 
-### Authorization
+### game_admin app
+
+<details><summary>login</summary>
 
 | View class      | URL pattern | Tested case     |
 | :---        |    :----:   |          ---: |
-| **game_admin.UserLoginView** | **admin/login/** | login with valid credentials |
+| **UserLoginView** | **admin/login/** | login with valid credentials |
 | | | login with invalid credentials |
 
+</details>
 
+## category app
 
+<details><summary>Access with an API key</summary>
 
+| View class      | URL pattern | Tested case     |
+| :---        |    :----:   |         :--- |
+| CategoryGetAllView | get-all/<str:api_key> | get data with a valid api-key |
+| | | get data with an invalid api-key |
+
+</details>
+
+<details><summary>Access as admin</summary>
+
+| View class      | URL pattern | Tested case     |
+| :---        |    :----:   |         :--- |
+| | | |
+
+</details>
