@@ -46,7 +46,7 @@ class test_category_add_valid_data(APITestCase):
         data = {
             "name": "Test Category",
             "description": "This is a test category",
-            "image": open("media/images/test/test.png", "rb"),
+            "image": open("media/test/test.png", "rb"),
         }
         response = self.client.post(
             self.url, data, HTTP_TOKEN1=self.token1, HTTP_TOKEN2=self.token2
@@ -103,7 +103,7 @@ class test_category_update_valid_data(APITestCase):
         data = {
             "name": "Test Category",
             "description": "This is a test category",
-            "image": open("media/images/test/test.png", "rb"),
+            "image": open("media/test/test.png", "rb"),
         }
 
         response = self.client.put(
@@ -200,7 +200,7 @@ def add_dataset(self):
     data = {
         "name": "Test Category",
         "description": "This is a test category",
-        "image": open("media/images/test/test.png", "rb"),
+        "image": open("media/test/test.png", "rb"),
     }
     response = self.client.post(
         url_add_dataset, data, HTTP_TOKEN1=self.token1, HTTP_TOKEN2=self.token2
