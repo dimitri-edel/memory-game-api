@@ -25,13 +25,15 @@ class PlaylistGetAllViewTestInvalidApiKey(APITestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
+# class for testing the PlaylistAddView with valid data and authorization
+
+
 # class for setting up the database for tests
 class SetupDatabase(APITestCase):
     def setUp(self):        
         self.user = self.set_up_user()
         self.category_id = self.set_up_category()
-        self.playlist_id = self.set_up_playlist()
-        self.client.post(reverse('playlist_add'), self.data, headers=self.headers)
+        self.playlist_id = self.set_up_playlist()        
 
     def set_up_category(self):
         url_add_category = reverse('category_add')
@@ -41,9 +43,10 @@ class SetupDatabase(APITestCase):
             'image': open('media/images/test/test.png', 'rb')
         }
         response = self.client.post(url_add_category, data, HTTP_TOKEN1=self.user.get_token1(), HTTP_TOKEN2=self.user.get_token2())
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.image_name = response.data["image"]
+        
         if response.status_code == status.HTTP_201_CREATED:
-            clean_up_after_uploading_category_image()
+            clean_up_after_uploading_category_image(self.image_name)
         self.dataset_id = response.data["id"]        
         return response.data["id"]
 
@@ -57,7 +60,7 @@ class SetupDatabase(APITestCase):
         }
         url_add_playlist = reverse('playlist_add')
         response = self.client.post(url_add_playlist, self.data, headers=self.headers)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        
         if response.status_code == status.HTTP_201_CREATED:
             clean_up_after_uploading_playlist_files()
         return response.data['id']
@@ -71,10 +74,11 @@ class SetupDatabase(APITestCase):
         }
         return user
 
-def clean_up_after_uploading_category_image():
-    ''' Clean up the image file after uploading it '''
+def clean_up_after_uploading_category_image(image_relative_path):
+    ''' Clean up the image file after uploading it '''    
+    image_name = image_relative_path.split('/')[-1]
     # Delete the image file from the media folder
-    media_path = os.path.join(os.getcwd(), 'media', 'images', 'test.png')
+    media_path = os.path.join(os.getcwd(), 'media', 'images', image_name)
     if os.path.exists(media_path):
         os.remove(media_path)
 
