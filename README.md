@@ -71,6 +71,13 @@ All automated tests are defined in test.py of each app.
 
 | View class      | URL pattern | Tested case     |
 | :---        |    :----:   |         :--- |
-| | | |
+| CategoryAddView | add/ | access is authorized and the data is valid |
+| | | access is authorized but the data is invalid 
+| | | unauthorized access |
+| CategoryUpdateView | update/<int:id>/ | access is authorized and the data is valid | 
+| | | access is authorized but the data is invalid 
+| | | unauthorized access |
+| CategoryDeleteView | delete/<int:id>/ | access is authorized and the id of the dataset is valid |
+| | | access is authorized but the id of the dataset is invalid |
 
 </details>

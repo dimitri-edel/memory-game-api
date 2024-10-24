@@ -71,6 +71,7 @@ class CategoryUpdateView(APIView):
 class CategoryDeleteView(APIView):
     '''Delete method for Category model'''
     def delete(self, request, id):
+        category = None
         # Get token1 and token2 from the request headers
         # If the tokens are not valid, return a access denied response
         token1 = request.headers.get('Token1')
@@ -79,7 +80,11 @@ class CategoryDeleteView(APIView):
         if not user.is_authorized(token1, token2):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         '''Delete method for Category model'''
-        category = Category.objects.get(id=id)
+        try:
+            category = Category.objects.get(id=id)
+        except Category.DoesNotExist:
+        # If the category does not exist return a 404 response        
+            return Response(status=status.HTTP_404_NOT_FOUND)
         category.delete()
         # If the API_MEDIA_STORAGE (in settings.py) is set to MEDIA_FOLDER, delete the image file from the media folder
         if API_MEDIA_STORAGE == 'MEDIA_FOLDER':

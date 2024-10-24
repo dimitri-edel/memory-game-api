@@ -30,7 +30,7 @@ class test_category_get_all_invalid_api_key(APITestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-# Test case for CategoryAddView with valid data
+# Test case for CategoryAddView when access is authorized and the data is valid
 class test_category_add_valid_data(APITestCase):
     def setUp(self):
         self.user = User()
@@ -47,7 +47,7 @@ class test_category_add_valid_data(APITestCase):
         }
         response = self.client.post(self.url, data, HTTP_TOKEN1=self.token1, HTTP_TOKEN2=self.token2)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-# Test case for CategoryAddView with invalid data
+# Test case for CategoryAddView when access authorization is successful but the data is invalid
 class test_category_add_invalid_data(APITestCase):
     def setUp(self):
         self.user = User()
@@ -65,7 +65,7 @@ class test_category_add_invalid_data(APITestCase):
         if response.status_code == status.HTTP_201_CREATED:
             clean_up_after_uploading_image()
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-# Test case for CategoryUpdateView with invalid tokens
+# Test case for CategoryUpdateView when access is not authorized(Invalid tokens)
 class test_category_add_invalid_tokens(APITestCase):
     def setUp(self):
         self.url = reverse('category_add')
@@ -77,7 +77,7 @@ class test_category_add_invalid_tokens(APITestCase):
         }
         response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-# Test case for CategoryUpdateView with valid data
+# Test case for CategoryUpdateView when access is authorized and the data is valid
 class test_category_update_valid_data(APITestCase):
     def setUp(self): 
         self.dataset_id = 0       
@@ -116,7 +116,7 @@ class test_category_update_valid_data(APITestCase):
         if response.status_code == status.HTTP_200_OK:
             clean_up_after_uploading_image()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-# Test case for CategoryUpdateView with invalid data
+# Test case for CategoryUpdateView when access authorization is successful but the data is invalid
 class test_category_update_invalid_data(APITestCase):
     def setUp(self): 
         self.dataset_id = 0       
@@ -153,7 +153,7 @@ class test_category_update_invalid_data(APITestCase):
         response = self.client.put(self.url, data, HTTP_TOKEN1=self.token1, HTTP_TOKEN2=self.token2)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-# Test class for CategoryUpdateView with invalid tokens
+# Test class for CategoryUpdateView when access is not authorized(Invalid tokens))
 class test_category_update_with_invalid_tokens(APITestCase):
     def setUp(self):
         self.url = reverse('category_update', kwargs={'id': 1})
@@ -165,7 +165,7 @@ class test_category_update_with_invalid_tokens(APITestCase):
         }
         response = self.client.put(self.url, data)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-# Test case for CategoryDeleteView with valid data
+# Test case for CategoryDeleteView when access is authorized and the id is valid
 class test_category_delete_valid_data(APITestCase):
     def setUp(self): 
         self.dataset_id = 0       
@@ -195,7 +195,39 @@ class test_category_delete_valid_data(APITestCase):
     def test_delete_category(self):
         response = self.client.delete(self.url, HTTP_TOKEN1=self.token1, HTTP_TOKEN2=self.token2)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-# Test case for CategoryDeleteView with invalid tokens
+
+# Test case for CategoryDeleteView when access is authorized but the id is invalid
+class test_category_delete_invalid_id(APITestCase):
+    def setUp(self): 
+        self.dataset_id = 0       
+        self.user = User()
+        self.user.login(os.environ["ADMIN_USERNAME"], os.environ["ADMIN_PASSWORD"])        
+        self.token1 = self.user.get_token1()
+        self.token2 = self.user.get_token2() 
+        self.add_dataset()      
+        # Attach id at the end of the url
+        self.url = reverse('category_delete', kwargs={'id': 100})
+    
+    def add_dataset(self):
+        url_add_dataset = reverse('category_add')
+        # create a multipart form with an image file
+        data = {
+            "name": "Test Category",
+            "description": "This is a test category",
+            "image" : open("media/images/test/test.png", "rb")
+        }
+        response = self.client.post(url_add_dataset, data, HTTP_TOKEN1=self.token1, HTTP_TOKEN2=self.token2)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        if response.status_code == status.HTTP_201_CREATED:
+            clean_up_after_uploading_image()
+        self.dataset_id = response.data["id"]        
+        return response.data["id"]
+    
+    def test_delete_category(self):
+        response = self.client.delete(self.url, HTTP_TOKEN1=self.token1, HTTP_TOKEN2=self.token2)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+# Test case for CategoryDeleteView when access is not authorized(Invalid tokens)
 class test_category_delete_invalid_tokens(APITestCase):
     def setUp(self):
         self.url = reverse('category_delete', kwargs={'id': 1})        
