@@ -89,6 +89,22 @@ class PlaylistAddViewTest(APITestCase):
         if os.path.exists(media_path_mp3):
             os.remove(media_path_mp3)
 
+# class for testing the PlaylistAddView, unauthorized attempt to add a playlist
+class PlaylistAddViewTestUnauthorized(APITestCase):
+    def setUp(self):
+        self.url = reverse("playlist_post")
+        self.data = {
+            "category": 1,
+            "title": "test_playlist",
+            "description": "test_description",
+            "image": open("media/test/playlist_test.png", "rb"),
+            "audio": open("media/test/playlist_test.mp3", "rb"),
+        }
+
+    # test the post method for PlaylistAddView
+    def test_post(self):
+        response = self.client.post(self.url, self.data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 # class for setting up the database for tests
 class SetupDatabase(APITestCase):
