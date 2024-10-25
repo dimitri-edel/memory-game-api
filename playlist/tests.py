@@ -1,5 +1,6 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
+from rest_framework.test import APIClient
 from django.urls import reverse
 import os
 
@@ -52,7 +53,9 @@ class PlaylistAddViewTest(APITestCase):
     def test_post(self):
         response = self.client.post(self.url, self.data, headers=self.headers)
         if response.status_code == status.HTTP_201_CREATED:
-            self.clean_up_after_uploading_playlist_files(response.data['image'], response.data['audio'])
+            self.clean_up_after_uploading_playlist_files(
+                response.data["image"], response.data["audio"]
+            )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def set_up_category(self):
@@ -74,8 +77,10 @@ class PlaylistAddViewTest(APITestCase):
             clean_up_after_uploading_category_image(self.image_name)
         self.dataset_id = response.data["id"]
         return response.data["id"]
-    
-    def clean_up_after_uploading_playlist_files(self, relative_path_image, relative_path_mp3):
+
+    def clean_up_after_uploading_playlist_files(
+        self, relative_path_image, relative_path_mp3
+    ):
         """Clean up the image and audio files after uploading them"""
         image_name = relative_path_image.split("/")[-1]
         mp3_name = relative_path_mp3.split("/")[-1]
@@ -86,6 +91,7 @@ class PlaylistAddViewTest(APITestCase):
             os.remove(media_path_image)
         if os.path.exists(media_path_mp3):
             os.remove(media_path_mp3)
+
 
 # class for testing the PlaylistAddView, unauthorized attempt to add a playlist
 class PlaylistAddViewTestUnauthorized(APITestCase):
@@ -103,6 +109,8 @@ class PlaylistAddViewTestUnauthorized(APITestCase):
     def test_post(self):
         response = self.client.post(self.url, self.data)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
 # class for testing PlaylistAddView with invalid data
 class PlaylistAddViewTestInvalidData(APITestCase):
     def setUp(self):
@@ -119,14 +127,40 @@ class PlaylistAddViewTestInvalidData(APITestCase):
             "description": "test_description",
             "image": open("media/test/playlist_test.png", "rb"),
         }
+
     def test_post(self):
         response = self.client.post(self.url, self.data, headers=self.headers)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
-# class for setting up the database for tests
-class SetupDatabase(APITestCase):
+# class for PlaylistUpdateItemView with valid data and authorization
+class PlaylistUpdateItemViewTest(APITestCase):
     def setUp(self):
+        self.testDatabase = SetupDatabase()
+        self.category_id = self.testDatabase.get_category_id()
+        self.playlist_id = self.testDatabase.get_playlist_id()
+        self.data = {
+            "category": self.category_id,
+            "title": "test_playlist",
+            "description": "test_description",
+            "image": open("media/test/playlist_test.png", "rb"),
+            "audio": open("media/test/playlist_test.mp3", "rb"),
+        }
+
+    def test_update(self):
+        url = reverse("playlist_update_item", args=[self.playlist_id])
+        response = self.client.put(url, self.data, headers=self.testDatabase.headers)
+        if response.status_code == status.HTTP_200_OK:
+            clean_up_after_uploading_playlist_files(
+                response.data["image"], response.data["audio"]
+            )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+# class for setting up the database for tests
+class SetupDatabase:
+    def __init__(self):
+        self.client = APIClient()
         self.user = self.set_up_user()
         self.category_id = self.set_up_category()
         self.playlist_id = self.set_up_playlist()
@@ -149,7 +183,7 @@ class SetupDatabase(APITestCase):
         if response.status_code == status.HTTP_201_CREATED:
             clean_up_after_uploading_category_image(self.image_name)
         self.dataset_id = response.data["id"]
-        return response.data["id"]
+        return response.data.get("id")
 
     def set_up_playlist(self):
         self.data = {
@@ -159,12 +193,14 @@ class SetupDatabase(APITestCase):
             "image": open("media/test/playlist_test.png", "rb"),
             "audio": open("media/test/playlist_test.mp3", "rb"),
         }
-        url_add_playlist = reverse("playlist_add")
+        url_add_playlist = reverse("playlist_post")
         response = self.client.post(url_add_playlist, self.data, headers=self.headers)
 
         if response.status_code == status.HTTP_201_CREATED:
-            clean_up_after_uploading_playlist_files()
-        return response.data["id"]
+            clean_up_after_uploading_playlist_files(
+                response.data["image"], response.data["audio"]
+            )
+        return response.data.get("id")
 
     def set_up_user(self):
         user = User()
@@ -172,6 +208,11 @@ class SetupDatabase(APITestCase):
         self.headers = {"Token1": user.get_token1(), "Token2": user.get_token2()}
         return user
 
+    def get_category_id(self):
+        return self.category_id
+
+    def get_playlist_id(self):
+        return self.playlist_id
 
 def clean_up_after_uploading_category_image(image_relative_path):
     """Clean up the image file after uploading it"""
@@ -180,3 +221,16 @@ def clean_up_after_uploading_category_image(image_relative_path):
     media_path = os.path.join(os.getcwd(), "media", "images", image_name)
     if os.path.exists(media_path):
         os.remove(media_path)
+
+
+def clean_up_after_uploading_playlist_files(relative_path_image, relative_path_mp3):
+    """Clean up the image and audio files after uploading them"""
+    image_name = relative_path_image.split("/")[-1]
+    mp3_name = relative_path_mp3.split("/")[-1]
+    # Delete the image and audio files from the media folder
+    media_path_image = os.path.join(os.getcwd(), "media", "images", image_name)
+    media_path_mp3 = os.path.join(os.getcwd(), "media", "audio", mp3_name)
+    if os.path.exists(media_path_image):        
+        os.remove(media_path_image)
+    if os.path.exists(media_path_mp3):        
+        os.remove(media_path_mp3)
