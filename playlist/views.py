@@ -79,7 +79,10 @@ class PlaylistDeleteItemView(APIView):
         if not user.is_authorized(token1, token2):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         """Delete item from the Playlist"""
-        playlist = Playlist.objects.get(id=id)
+        try:
+            playlist = Playlist.objects.get(id=id)
+        except Playlist.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
         playlist.delete()
         """ If the API_MEDIA_STORAGE (in settings.py) is set to MEDIA_FOLDER, delete the image and audio files from the media folder"""
