@@ -80,40 +80,25 @@ class PlaylistDeleteItemView(APIView):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         """Delete item from the Playlist"""
         playlist = Playlist.objects.get(id=id)
-               
+
         playlist.delete()
         """ If the API_MEDIA_STORAGE (in settings.py) is set to MEDIA_FOLDER, delete the image and audio files from the media folder"""
         if API_MEDIA_STORAGE == "MEDIA_FOLDER":
             self.remove_associated_files(playlist)
-            # # Delete the image and audio files from the media folder
-            # media_image_path = os.path.join(os.getcwd(), "media", playlist.image.name)
-            # print("media_image_path", media_image_path)
-            # if os.path.exists(media_image_path):
-            #     os.remove(media_image_path)
-            # media_audio_path = os.path.join(os.getcwd(), "media", playlist.audio.name)
-            # print("media_audio_path", media_audio_path)
-            # if os.path.exists(media_audio_path):
-            #     os.remove(media_audio_path)
-            # media_quiz_path = os.path.join(os.getcwd(), "media", playlist.quiz.name)
-            # if os.path.exists(media_quiz_path):
-            #     os.remove(media_quiz_path)
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
-    
+
     def remove_associated_files(self, playlist):
-        '''Remove the associated files from the media folder'''
+        """Remove the associated files from the media folder"""
         try:
             # Delete the image and audio files from the media folder
-            media_image_path = os.path.join(os.getcwd(), "media", playlist.image.name)
-            print("media_image_path", media_image_path)
+            media_image_path = os.path.join(os.getcwd(), "media", playlist.image.name)            
             if os.path.exists(media_image_path):
                 os.remove(media_image_path)
         except:
             pass
-    
+
         try:
-            media_audio_path = os.path.join(os.getcwd(), "media", playlist.audio.name)
-            print("media_audio_path", media_audio_path)
+            media_audio_path = os.path.join(os.getcwd(), "media", playlist.audio.name)            
             if os.path.exists(media_audio_path):
                 os.remove(media_audio_path)
         except:
@@ -125,6 +110,7 @@ class PlaylistDeleteItemView(APIView):
                 os.remove(media_quiz_path)
         except:
             pass
+
 
 class PlaylistUpdateItemView(APIView):
     """Update view for Playlist model"""

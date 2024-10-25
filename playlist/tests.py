@@ -205,6 +205,16 @@ class PlaylistDeleteItemViewTest(APITestCase):
         response = self.client.delete(url, headers=self.testDatabase.headers)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
+# class for testing the PlaylistDeleteItemView with invalid authorization
+class PlaylistDeleteItemViewTestUnauthorized(APITestCase):
+    def setUp(self):
+        self.testDatabase = SetupDatabase()
+        self.playlist_id = self.testDatabase.get_playlist_id()
+
+    def test_delete(self):
+        url = reverse("playlist_delete_item", args=[self.playlist_id])
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 def clean_up_after_uploading_category_image(image_relative_path):
     """Clean up the image file after uploading it"""
