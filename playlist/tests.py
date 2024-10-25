@@ -48,11 +48,9 @@ class PlaylistAddViewTest(APITestCase):
             "audio": open("media/test/playlist_test.mp3", "rb"),
         }
 
-    # test the post method for PlaylistAddView
+    # test the post method for PlaylistAddView with vliad authorization and data
     def test_post(self):
         response = self.client.post(self.url, self.data, headers=self.headers)
-        print("image", response.data["image"])
-        print("audio", response.data["audio"])
         if response.status_code == status.HTTP_201_CREATED:
             self.clean_up_after_uploading_playlist_files(response.data['image'], response.data['audio'])
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -105,6 +103,26 @@ class PlaylistAddViewTestUnauthorized(APITestCase):
     def test_post(self):
         response = self.client.post(self.url, self.data)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+# class for testing PlaylistAddView with invalid data
+class PlaylistAddViewTestInvalidData(APITestCase):
+    def setUp(self):
+        self.user = User()
+        self.user.login(os.environ["ADMIN_USERNAME"], os.environ["ADMIN_PASSWORD"])
+        self.headers = {
+            "Token1": self.user.get_token1(),
+            "Token2": self.user.get_token2(),
+        }
+        self.url = reverse("playlist_post")
+        self.data = {
+            "category": 1,
+            "title": "test_playlist",
+            "description": "test_description",
+            "image": open("media/test/playlist_test.png", "rb"),
+        }
+    def test_post(self):
+        response = self.client.post(self.url, self.data, headers=self.headers)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
 
 # class for setting up the database for tests
 class SetupDatabase(APITestCase):
