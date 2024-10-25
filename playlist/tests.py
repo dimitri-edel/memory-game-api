@@ -214,6 +214,23 @@ class SetupDatabase:
     def get_playlist_id(self):
         return self.playlist_id
 
+# class for testing the PlaylistUpdateItemView with invalid data but valid authorization
+class PlaylistUpdateItemViewTestInvalidData(APITestCase):
+    def setUp(self):
+        self.testDatabase = SetupDatabase()
+        self.category_id = self.testDatabase.get_category_id()
+        self.playlist_id = self.testDatabase.get_playlist_id()
+        self.data = {
+            "category": self.category_id,
+            "title": "test_playlist",
+            "description": "",            
+        }
+
+    def test_update(self):
+        url = reverse("playlist_update_item", args=[self.playlist_id])
+        response = self.client.put(url, self.data, headers=self.testDatabase.headers)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
 def clean_up_after_uploading_category_image(image_relative_path):
     """Clean up the image file after uploading it"""
     image_name = image_relative_path.split("/")[-1]
