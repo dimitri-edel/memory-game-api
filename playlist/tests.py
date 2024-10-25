@@ -157,8 +157,80 @@ class PlaylistUpdateItemViewTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
-# class for setting up the database for tests
+# class for testing the PlaylistUpdateItemView with invalid data but valid authorization
+class PlaylistUpdateItemViewTestInvalidData(APITestCase):
+    def setUp(self):
+        self.testDatabase = SetupDatabase()
+        self.category_id = self.testDatabase.get_category_id()
+        self.playlist_id = self.testDatabase.get_playlist_id()
+        self.data = {
+            "category": self.category_id,
+            "title": "test_playlist",
+            "description": "",
+        }
+
+    def test_update(self):
+        url = reverse("playlist_update_item", args=[self.playlist_id])
+        response = self.client.put(url, self.data, headers=self.testDatabase.headers)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+# class for testing the PlaylistUpdateItemView with invalid authorization
+class PlaylistUpdateItemViewTestUnauthorized(APITestCase):
+    def setUp(self):
+        self.testDatabase = SetupDatabase()
+        self.category_id = self.testDatabase.get_category_id()
+        self.playlist_id = self.testDatabase.get_playlist_id()
+        self.data = {
+            "category": self.category_id,
+            "title": "test_playlist",
+            "description": "test_description",
+            "image": open("media/test/playlist_test.png", "rb"),
+            "audio": open("media/test/playlist_test.mp3", "rb"),
+        }
+
+    def test_update(self):
+        url = reverse("playlist_update_item", args=[self.playlist_id])
+        response = self.client.put(url, self.data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+# class for testing the PlaylistDeleteItemView with valid authorization and id of the playlist
+class PlaylistDeleteItemViewTest(APITestCase):
+    def setUp(self):
+        self.testDatabase = SetUpDatabaseForDelete()
+        self.playlist_id = self.testDatabase.get_playlist_id()
+
+    def test_delete(self):
+        url = reverse("playlist_delete_item", args=[self.playlist_id])
+        response = self.client.delete(url, headers=self.testDatabase.headers)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+
+def clean_up_after_uploading_category_image(image_relative_path):
+    """Clean up the image file after uploading it"""
+    image_name = image_relative_path.split("/")[-1]
+    # Delete the image file from the media folder
+    media_path = os.path.join(os.getcwd(), "media", "images", image_name)
+    if os.path.exists(media_path):
+        os.remove(media_path)
+
+
+def clean_up_after_uploading_playlist_files(relative_path_image, relative_path_mp3):
+    """Clean up the image and audio files after uploading them"""
+    image_name = relative_path_image.split("/")[-1]
+    mp3_name = relative_path_mp3.split("/")[-1]
+    # Delete the image and audio files from the media folder
+    media_path_image = os.path.join(os.getcwd(), "media", "images", image_name)
+    media_path_mp3 = os.path.join(os.getcwd(), "media", "audio", mp3_name)
+    if os.path.exists(media_path_image):
+        os.remove(media_path_image)
+    if os.path.exists(media_path_mp3):
+        os.remove(media_path_mp3)
+
+
 class SetupDatabase:
+    """class for setting up a database with dummy data for tests"""
+
     def __init__(self):
         self.client = APIClient()
         self.user = self.set_up_user()
@@ -214,29 +286,36 @@ class SetupDatabase:
     def get_playlist_id(self):
         return self.playlist_id
 
-# class for testing the PlaylistUpdateItemView with invalid data but valid authorization
-class PlaylistUpdateItemViewTestInvalidData(APITestCase):
-    def setUp(self):
-        self.testDatabase = SetupDatabase()
-        self.category_id = self.testDatabase.get_category_id()
-        self.playlist_id = self.testDatabase.get_playlist_id()
-        self.data = {
-            "category": self.category_id,
-            "title": "test_playlist",
-            "description": "",            
+class SetUpDatabaseForDelete:
+    '''class for setting up a database with dummy data to prepare for the delete test. 
+       DIFFERENCE TO SetupDatabase: The files attachted to playlist are not deleted after the test'''
+    def __init__(self):
+        self.client = APIClient()
+        self.user = self.set_up_user()
+        self.category_id = self.set_up_category()
+        self.playlist_id = self.set_up_playlist()
+
+    def set_up_category(self):
+        url_add_category = reverse("category_add")
+        data = {
+            "name": "test_category",
+            "description": "test_description",
+            "image": open("media/test/test.png", "rb"),
         }
+        response = self.client.post(
+            url_add_category,
+            data,
+            HTTP_TOKEN1=self.user.get_token1(),
+            HTTP_TOKEN2=self.user.get_token2(),
+        )
+        self.image_name = response.data["image"]
 
-    def test_update(self):
-        url = reverse("playlist_update_item", args=[self.playlist_id])
-        response = self.client.put(url, self.data, headers=self.testDatabase.headers)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        if response.status_code == status.HTTP_201_CREATED:
+            clean_up_after_uploading_category_image(self.image_name)
+        self.dataset_id = response.data["id"]
+        return response.data.get("id")
 
-# class for testing the PlaylistUpdateItemView with invalid authorization
-class PlaylistUpdateItemViewTestUnauthorized(APITestCase):
-    def setUp(self):
-        self.testDatabase = SetupDatabase()
-        self.category_id = self.testDatabase.get_category_id()
-        self.playlist_id = self.testDatabase.get_playlist_id()
+    def set_up_playlist(self):
         self.data = {
             "category": self.category_id,
             "title": "test_playlist",
@@ -244,29 +323,18 @@ class PlaylistUpdateItemViewTestUnauthorized(APITestCase):
             "image": open("media/test/playlist_test.png", "rb"),
             "audio": open("media/test/playlist_test.mp3", "rb"),
         }
+        url_add_playlist = reverse("playlist_post")
+        response = self.client.post(url_add_playlist, self.data, headers=self.headers)       
+        return response.data.get("id")
 
-    def test_update(self):
-        url = reverse("playlist_update_item", args=[self.playlist_id])
-        response = self.client.put(url, self.data)
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+    def set_up_user(self):
+        user = User()
+        user.login(os.environ["ADMIN_USERNAME"], os.environ["ADMIN_PASSWORD"])
+        self.headers = {"Token1": user.get_token1(), "Token2": user.get_token2()}
+        return user
 
-def clean_up_after_uploading_category_image(image_relative_path):
-    """Clean up the image file after uploading it"""
-    image_name = image_relative_path.split("/")[-1]
-    # Delete the image file from the media folder
-    media_path = os.path.join(os.getcwd(), "media", "images", image_name)
-    if os.path.exists(media_path):
-        os.remove(media_path)
+    def get_category_id(self):
+        return self.category_id
 
-
-def clean_up_after_uploading_playlist_files(relative_path_image, relative_path_mp3):
-    """Clean up the image and audio files after uploading them"""
-    image_name = relative_path_image.split("/")[-1]
-    mp3_name = relative_path_mp3.split("/")[-1]
-    # Delete the image and audio files from the media folder
-    media_path_image = os.path.join(os.getcwd(), "media", "images", image_name)
-    media_path_mp3 = os.path.join(os.getcwd(), "media", "audio", mp3_name)
-    if os.path.exists(media_path_image):        
-        os.remove(media_path_image)
-    if os.path.exists(media_path_mp3):        
-        os.remove(media_path_mp3)
+    def get_playlist_id(self):
+        return self.playlist_id
