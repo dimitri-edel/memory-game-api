@@ -13,15 +13,15 @@ Pillow
 
 ### Category API
 
-**category/get-all/<str:api_key>**
+**category/get-all/\<str:api_key>**
 
 ### Category Admin
 
 **category/add/**
 
-**category/update/<int:id>/**
+**category/update/\<int:id>/**
 
-**category/delete/<int:id>/**
+**category/delete/\<int:id>/**
 
 ### Playlist API
 
@@ -74,10 +74,38 @@ All automated tests are defined in test.py of each app.
 | CategoryAddView | add/ | access is authorized and the data is valid |
 | | | access is authorized but the data is invalid 
 | | | unauthorized access |
-| CategoryUpdateView | update/<int:id>/ | access is authorized and the data is valid | 
+| CategoryUpdateView | update/\<int:id>/ | access is authorized and the data is valid | 
 | | | access is authorized but the data is invalid 
 | | | unauthorized access |
-| CategoryDeleteView | delete/<int:id>/ | access is authorized and the id of the dataset is valid |
+| CategoryDeleteView | delete/\<int:id>/ | access is authorized and the id of the dataset is valid |
 | | | access is authorized but the id of the dataset is invalid |
+
+</details>
+
+## playlist app
+
+<details><summary>Access with an API key</summary>
+
+| View class      | URL pattern | Tested case     |
+| :---        |    :----:   |         :--- |
+| PlaylistGetAllView | get-all/\<str:filter>/\<str:api_key> | get data with a valid api key |
+| | | get data with an invalid api key |
+
+</details>
+
+
+<details><summary>Access as admin</summary>
+
+| View class      | URL pattern | Tested case     |
+| :---        |    :----:   |         :--- |
+| PlaylistAddView | add/ | adding a playlist valid data and authorization |
+| | | unauthorized access |
+| | | access is authorized but the data is invalid |
+| PlaylistUpdateItemView | update/\<int:id>/ | access authorized and data is valid |
+| | | access is authorized but data is invalid |
+| | | unauthorized access |
+| PlaylistDeleteItemView | delete/\<int:id>/ | access authorized and the id of the dataset is valid |
+| | | unauthorized access |
+| | | invalid id |
 
 </details>
