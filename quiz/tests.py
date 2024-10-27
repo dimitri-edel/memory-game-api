@@ -196,6 +196,60 @@ class TestQuizUpdateViewWithValidTokensAndInvalidData(APITestCase):
 
     def test_put_request(self):
         self.assertEqual(self.response.status_code, status.HTTP_404_NOT_FOUND)
+# Test QuizDeleteView class with valid tokens and valid data
+class TestQuizDeleteViewWithValidTokens(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = User()
+        self.user.login(os.environ["ADMIN_USERNAME"], os.environ["ADMIN_PASSWORD"])
+        self.category_id = self.set_up_category()
+        self.quiz_id = self.set_up_quiz()
+        self.url = reverse("delete-quiz", args=[self.quiz_id])
+        self.response = self.client.delete(
+            self.url,
+            HTTP_TOKEN1=self.user.get_token1(),
+            HTTP_TOKEN2=self.user.get_token2(),
+        )
+
+    def set_up_category(self):
+        url_add_category = reverse("category_add")
+        data = {
+            "name": "test_category",
+            "description": "test_description",
+            "image": open("media/test/test.png", "rb"),
+        }
+        response = self.client.post(
+            url_add_category,
+            data,
+            HTTP_TOKEN1=self.user.get_token1(),
+            HTTP_TOKEN2=self.user.get_token2(),
+        )
+        self.image_name = response.data["image"]
+
+        if response.status_code == status.HTTP_201_CREATED:
+            clean_up_after_uploading_category_image(self.image_name)
+        self.dataset_id = response.data["id"]
+        return response.data.get("id")
+
+    def set_up_quiz(self):
+        url_add_quiz = reverse("add-quiz")
+        data = {
+            "category": self.category_id,
+            "json": open("media/test/test.json", "rb"),
+        }
+        response = self.client.post(
+            url_add_quiz,
+            data,
+            HTTP_TOKEN1=self.user.get_token1(),
+            HTTP_TOKEN2=self.user.get_token2(),
+        )
+        self.json_name = response.data["json"]
+        if response.status_code == status.HTTP_201_CREATED:
+            clean_up_after_uploading_quiz_json(self.json_name)
+        return response.data.get("id")
+
+    def test_delete_request(self):
+        self.assertEqual(self.response.status_code, status.HTTP_204_NO_CONTENT)
 
 class SetupDatabase:
     """class for setting up a database with dummy data for tests"""
