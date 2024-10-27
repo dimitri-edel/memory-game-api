@@ -250,6 +250,15 @@ class TestQuizDeleteViewWithValidTokens(APITestCase):
 
     def test_delete_request(self):
         self.assertEqual(self.response.status_code, status.HTTP_204_NO_CONTENT)
+# Test QuizDeleteView class with invalid tokens and valid data
+class TestQuizDeleteViewWithInvalidTokens(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.url = reverse("delete-quiz", args=[1])
+        self.response = self.client.delete(self.url)
+
+    def test_delete_request(self):
+        self.assertEqual(self.response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 class SetupDatabase:
     """class for setting up a database with dummy data for tests"""
