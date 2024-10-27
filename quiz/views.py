@@ -71,7 +71,11 @@ class QuizUpdateView(APIView):
         if not user.is_authorized(token1, token2):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         '''Put method for Quiz model'''
-        quiz = Quiz.objects.get(id=id)
+        try:
+            quiz = Quiz.objects.get(id=id)
+        except Quiz.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        
         quiz_serializer = QuizSerializer(quiz, data=request.data)
         if quiz_serializer.is_valid():
             quiz_serializer.save()

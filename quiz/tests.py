@@ -176,7 +176,27 @@ class TestQuizUpdateViewWithInvalidTokens(APITestCase):
 
     def test_put_request(self):
         self.assertEqual(self.response.status_code, status.HTTP_401_UNAUTHORIZED)
-        
+# Test QuizUpdateView class with valid tokens and invalid data
+class TestQuizUpdateViewWithValidTokensAndInvalidData(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = User()
+        self.user.login(os.environ["ADMIN_USERNAME"], os.environ["ADMIN_PASSWORD"])
+        self.url = reverse("update-quiz", args=[1])
+        self.data = {
+            "category": 1,
+            "json": open("media/test/test.json", "rb"),
+        }
+        self.response = self.client.put(
+            self.url,
+            self.data,
+            HTTP_TOKEN1=self.user.get_token1(),
+            HTTP_TOKEN2=self.user.get_token2(),
+        )
+
+    def test_put_request(self):
+        self.assertEqual(self.response.status_code, status.HTTP_404_NOT_FOUND)
+
 class SetupDatabase:
     """class for setting up a database with dummy data for tests"""
 
