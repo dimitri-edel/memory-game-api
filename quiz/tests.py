@@ -103,7 +103,67 @@ class TestQuizAddViewWithValidTokensAndInvalidData(APITestCase):
 
     def test_post_request(self):
         self.assertEqual(self.response.status_code, status.HTTP_400_BAD_REQUEST)
+# Test QuizUpdateView class with valid tokens and valid data
+class TestQuizUpdateViewWithValidTokens(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = User()
+        self.user.login(os.environ["ADMIN_USERNAME"], os.environ["ADMIN_PASSWORD"])
+        self.category_id = self.set_up_category()
+        self.quiz_id = self.set_up_quiz()
+        self.url = reverse("update-quiz", args=[self.quiz_id])
+        self.data = {
+            "category": self.category_id,
+            "json": open("media/test/test.json", "rb"),
+        }
+        self.response = self.client.put(
+            self.url,
+            self.data,
+            HTTP_TOKEN1=self.user.get_token1(),
+            HTTP_TOKEN2=self.user.get_token2(),
+        )
 
+    def set_up_category(self):
+        url_add_category = reverse("category_add")
+        data = {
+            "name": "test_category",
+            "description": "test_description",
+            "image": open("media/test/test.png", "rb"),
+        }
+        response = self.client.post(
+            url_add_category,
+            data,
+            HTTP_TOKEN1=self.user.get_token1(),
+            HTTP_TOKEN2=self.user.get_token2(),
+        )
+        self.image_name = response.data["image"]
+
+        if response.status_code == status.HTTP_201_CREATED:
+            clean_up_after_uploading_category_image(self.image_name)
+        self.dataset_id = response.data["id"]
+        return response.data.get("id")
+
+    def set_up_quiz(self):
+        url_add_quiz = reverse("add-quiz")
+        data = {
+            "category": self.category_id,
+            "json": open("media/test/test.json", "rb"),
+        }
+        response = self.client.post(
+            url_add_quiz,
+            data,
+            HTTP_TOKEN1=self.user.get_token1(),
+            HTTP_TOKEN2=self.user.get_token2(),
+        )
+        self.json_name = response.data["json"]
+        if response.status_code == status.HTTP_201_CREATED:
+            clean_up_after_uploading_quiz_json(self.json_name)
+        return response.data.get("id")
+
+    def test_put_request(self):
+        clean_up_after_uploading_quiz_json(self.response.data["json"])
+        self.assertEqual(self.response.status_code, status.HTTP_200_OK)
+# Test QuizUpdateView class with invalid tokens and valid data
 class SetupDatabase:
     """class for setting up a database with dummy data for tests"""
 
@@ -141,7 +201,7 @@ class SetupDatabase:
         return user
     
     def set_up_quiz(self)->int:
-        url_add_quiz = reverse("quiz_add")
+        url_add_quiz = reverse("add-quiz")
         data = {
             "category": self.category_id,
             "json": open("media/test/test.json", "rb"),

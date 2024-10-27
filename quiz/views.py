@@ -45,9 +45,7 @@ class QuizAddView(APIView):
         user = User()        
 
         if not user.is_authorized(token1, token2):
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
-        print("Request data.....:")
-        print(request.data)
+            return Response(status=status.HTTP_401_UNAUTHORIZED)        
         '''Post method for Quiz model'''
         quiz_serializer = QuizSerializer(data=request.data)
         '''If the quiz for the submitted category already exists in the Quiz model, return a 404 Already exists response'''
