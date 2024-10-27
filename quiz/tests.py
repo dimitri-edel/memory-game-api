@@ -67,6 +67,7 @@ class TestQuizAddViewWithValidTokens(APITestCase):
         return response.data.get("id")
 
     def test_post_request(self):
+        clean_up_after_uploading_quiz_json(self.response.data["json"])
         self.assertEqual(self.response.status_code, status.HTTP_201_CREATED)
 
 # Test QuizAddView class with invalid tokens and valid data
@@ -82,6 +83,26 @@ class TestQuizAddViewWithInvalidTokens(APITestCase):
 
     def test_post_request(self):
         self.assertEqual(self.response.status_code, status.HTTP_401_UNAUTHORIZED)
+# Test QuizAddView class with valid tokens and invalid data
+class TestQuizAddViewWithValidTokensAndInvalidData(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = User()
+        self.user.login(os.environ["ADMIN_USERNAME"], os.environ["ADMIN_PASSWORD"])
+        self.url = reverse("add-quiz")
+        self.data = {
+            "category": 1,
+            "json": open("media/test/test.json", "rb"),
+        }
+        self.response = self.client.post(
+            self.url,
+            self.data,
+            HTTP_TOKEN1=self.user.get_token1(),
+            HTTP_TOKEN2=self.user.get_token2(),
+        )
+
+    def test_post_request(self):
+        self.assertEqual(self.response.status_code, status.HTTP_400_BAD_REQUEST)
 
 class SetupDatabase:
     """class for setting up a database with dummy data for tests"""
