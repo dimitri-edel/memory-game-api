@@ -7,6 +7,17 @@ import os
 from memory_game_api import env
 from game_admin.authentication import User
 
+# Test QuizListView class with valid API key
+class TestQuizListViewWithValidAPIKey(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.url = reverse("get-all-quizzes", args=["none", os.environ["API_KEY"]])
+        self.response = self.client.get(self.url)
+
+    def test_get_request(self):
+        self.assertEqual(self.response.status_code, status.HTTP_200_OK)
+
+
 class SetupDatabase:
     """class for setting up a database with dummy data for tests"""
 
@@ -17,7 +28,7 @@ class SetupDatabase:
         self.category_id = self.set_up_category() 
         self.quiz_id = self.set_up_quiz()       
 
-    def set_up_category(self):
+    def set_up_category(self)->int:
         url_add_category = reverse("category_add")
         data = {
             "name": "test_category",
@@ -37,13 +48,13 @@ class SetupDatabase:
         self.dataset_id = response.data["id"]
         return response.data.get("id")
 
-    def set_up_user(self):
+    def set_up_user(self)->User:
         user = User()
         user.login(os.environ["ADMIN_USERNAME"], os.environ["ADMIN_PASSWORD"])
         self.headers = {"Token1": user.get_token1(), "Token2": user.get_token2()}
         return user
     
-    def set_up_quiz(self):
+    def set_up_quiz(self)->int:
         url_add_quiz = reverse("quiz_add")
         data = {
             "category": self.category_id,
@@ -71,7 +82,7 @@ def clean_up_after_uploading_category_image(image_relative_path):
     if os.path.exists(media_path):
         os.remove(media_path)
 
-def get_filename_from_path(path):
+def get_filename_from_path(path)->str:
     """Get the filename from the path"""
     return path.split("/")[-1]
 
