@@ -26,13 +26,55 @@ class TestQuizListViewWithInvalidAPIKey(APITestCase):
 
     def test_get_request(self):
         self.assertEqual(self.response.status_code, status.HTTP_401_UNAUTHORIZED)
+    
+# Test QuizAddView class with valid tokens and valid data
+class TestQuizAddViewWithValidTokens(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = User()
+        self.user.login(os.environ["ADMIN_USERNAME"], os.environ["ADMIN_PASSWORD"])
+        self.category_id = self.set_up_category()
+        self.url = reverse("add-quiz")
+        self.data = {
+            "category": self.category_id,
+            "json": open("media/test/test.json", "rb"),
+        }
+        self.response = self.client.post(
+            self.url,
+            self.data,
+            HTTP_TOKEN1=self.user.get_token1(),
+            HTTP_TOKEN2=self.user.get_token2(),
+        )
+
+    def set_up_category(self):
+        url_add_category = reverse("category_add")
+        data = {
+            "name": "test_category",
+            "description": "test_description",
+            "image": open("media/test/test.png", "rb"),
+        }
+        response = self.client.post(
+            url_add_category,
+            data,
+            HTTP_TOKEN1=self.user.get_token1(),
+            HTTP_TOKEN2=self.user.get_token2(),
+        )
+        self.image_name = response.data["image"]
+
+        if response.status_code == status.HTTP_201_CREATED:
+            clean_up_after_uploading_category_image(self.image_name)
+        self.dataset_id = response.data["id"]
+        return response.data.get("id")
+
+    def test_post_request(self):
+        self.assertEqual(self.response.status_code, status.HTTP_201_CREATED)
 
 class SetupDatabase:
     """class for setting up a database with dummy data for tests"""
 
     def __init__(self, clean_up: True):
         self.client = APIClient()        
-        self.clean_up = clean_up
+        self.clean_up = clean_up        
         self.user = self.set_up_user()
         self.category_id = self.set_up_category() 
         self.quiz_id = self.set_up_quiz()       
@@ -77,7 +119,10 @@ class SetupDatabase:
         )
         self.json_name = response.data["json"]
         if response.status_code == status.HTTP_201_CREATED:
-            clean_up_after_uploading_quiz_json(self.json_name)
+            if self.clean_up:
+                '''When testing the delete view, the test_add_quiz variable must be set to False, 
+                because the delete view will delete the file'''
+                clean_up_after_uploading_quiz_json(self.json_name)        
         return response.data.get("id")
 
     def get_category_id(self):
