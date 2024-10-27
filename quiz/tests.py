@@ -164,6 +164,19 @@ class TestQuizUpdateViewWithValidTokens(APITestCase):
         clean_up_after_uploading_quiz_json(self.response.data["json"])
         self.assertEqual(self.response.status_code, status.HTTP_200_OK)
 # Test QuizUpdateView class with invalid tokens and valid data
+class TestQuizUpdateViewWithInvalidTokens(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.url = reverse("update-quiz", args=[1])
+        self.data = {
+            "category": 1,
+            "json": open("media/test/test.json", "rb"),
+        }
+        self.response = self.client.put(self.url, self.data)
+
+    def test_put_request(self):
+        self.assertEqual(self.response.status_code, status.HTTP_401_UNAUTHORIZED)
+        
 class SetupDatabase:
     """class for setting up a database with dummy data for tests"""
 
