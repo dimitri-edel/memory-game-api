@@ -17,6 +17,15 @@ class TestQuizListViewWithValidAPIKey(APITestCase):
     def test_get_request(self):
         self.assertEqual(self.response.status_code, status.HTTP_200_OK)
 
+# Test QuizListView class with invalid API key
+class TestQuizListViewWithInvalidAPIKey(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.url = reverse("get-all-quizzes", args=["none", "invalid_api_key"])
+        self.response = self.client.get(self.url)
+
+    def test_get_request(self):
+        self.assertEqual(self.response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 class SetupDatabase:
     """class for setting up a database with dummy data for tests"""
