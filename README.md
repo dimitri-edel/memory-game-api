@@ -62,7 +62,7 @@ All automated tests are defined in test.py of each app.
 
 | View class      | URL pattern | Tested case     |
 | :---        |    :----:   |         :--- |
-| CategoryGetAllView | get-all/<str:api_key> | get data with a valid api-key |
+| CategoryGetAllView | category/get-all/<str:api_key> | get data with a valid api-key |
 | | | get data with an invalid api-key |
 
 </details>
@@ -71,13 +71,13 @@ All automated tests are defined in test.py of each app.
 
 | View class      | URL pattern | Tested case     |
 | :---        |    :----:   |         :--- |
-| CategoryAddView | add/ | access is authorized and the data is valid |
+| CategoryAddView | category/add/ | access is authorized and the data is valid |
 | | | access is authorized but the data is invalid 
 | | | unauthorized access |
-| CategoryUpdateView | update/\<int:id>/ | access is authorized and the data is valid | 
+| CategoryUpdateView | category/update/\<int:id>/ | access is authorized and the data is valid | 
 | | | access is authorized but the data is invalid 
 | | | unauthorized access |
-| CategoryDeleteView | delete/\<int:id>/ | access is authorized and the id of the dataset is valid |
+| CategoryDeleteView | category/delete/\<int:id>/ | access is authorized and the id of the dataset is valid |
 | | | access is authorized but the id of the dataset is invalid |
 
 </details>
@@ -88,7 +88,7 @@ All automated tests are defined in test.py of each app.
 
 | View class      | URL pattern | Tested case     |
 | :---        |    :----:   |         :--- |
-| PlaylistGetAllView | get-all/\<str:filter>/\<str:api_key> | get data with a valid api key |
+| PlaylistGetAllView | playlist/category/get-all/\<str:filter>/\<str:api_key> | get data with a valid api key |
 | | | get data with an invalid api key |
 
 </details>
@@ -98,14 +98,25 @@ All automated tests are defined in test.py of each app.
 
 | View class      | URL pattern | Tested case     |
 | :---        |    :----:   |         :--- |
-| PlaylistAddView | add/ | adding a playlist valid data and authorization |
+| PlaylistAddView | playlist/add/ | adding a playlist valid data and authorization |
 | | | unauthorized access |
 | | | access is authorized but the data is invalid |
-| PlaylistUpdateItemView | update/\<int:id>/ | access authorized and data is valid |
+| PlaylistUpdateItemView | playlist/update/\<int:id>/ | access authorized and data is valid |
 | | | access is authorized but data is invalid |
 | | | unauthorized access |
-| PlaylistDeleteItemView | delete/\<int:id>/ | access authorized and the id of the dataset is valid |
+| PlaylistDeleteItemView | playlist/delete/\<int:id>/ | access authorized and the id of the dataset is valid |
 | | | unauthorized access |
 | | | invalid id |
+
+</details>
+
+## quiz app
+
+<details><summary>Access with an API key</summary>
+
+| View class      | URL pattern | Tested case     |
+| :---        |    :----:   |         :--- |
+| QuizListView | quiz/get-all/\<str:filter>/\<str:api_key> | get all quizes with a valid api key |
+| | | try to get all quizes with a invalid api key |
 
 </details>
