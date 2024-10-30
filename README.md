@@ -4,6 +4,7 @@ The API is designed as the backend of the music-memory-game.
 Dependencies: (pip install those)
 psycopg2
 Pillow
+django-cors-headers
 
 ## URLs
 
@@ -173,9 +174,26 @@ Add code to settings.py as:
     else:
         MEDIA_URL = 'gameapi/media/'
 
-
 </code>
 
+</details>
 
+<details><summary>Create virtual environment inside the folder on the webserver</summary>
+
+In PUTTy navigate to the folder where you want to trasfer the project to.
+
+The command for createing a virtual environment folder: virtualenv \<folder name>
+
+The command for activating the virtual envronment : source venv/bin/activate
+
+Now intall the dependencies:
+
+<code>
+
+    pip install psycopg2
+    pip install Pillow
+    pip install django-cors-headers
+
+</code>
 
 </details>
