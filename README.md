@@ -120,3 +120,26 @@ All automated tests are defined in test.py of each app.
 | | | try to get all quizes with a invalid api key |
 
 </details>
+
+## Deployment
+
+### Preparation
+
+I decided to deploy this API on a VPS \(Ubuntu \/ appache2 Webserver)
+
+<details><summary>Installing a new SSL certifacate</summary>
+
+After obtaining the certifacte file and ssl private key from my provider I had to install them into the virtual hosts that are 
+intended to use them.
+
+[website I used to find out how to install them on an apache2 webserver](https://www.ssldragon.com/how-to/install-ssl-certificate/ubuntu/#install-ubuntu)
+
+</details>
+
+<details><summary>Changing settings.py</summary>
+
+
+
+
+
+</details>
