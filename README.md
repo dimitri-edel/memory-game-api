@@ -128,7 +128,7 @@ All automated tests are defined in test.py of each app.
 
 I decided to deploy this API on a VPS \(Ubuntu \/ appache2 Webserver)
 
-<details><summary>Installing a new SSL certifacate</summary>
+<details><summary>0. Installing a new SSL certifacate</summary>
 
 After obtaining the certifacte file and ssl private key from my provider I had to install them into the virtual hosts that are 
 intended to use them.
@@ -154,7 +154,30 @@ Add these lines to the virtual host:
 
 </details>
 
-<details><summary>Changing settings.py</summary>
+<details><summary>1. Changing settings.py</summary>
+
+The localhost was using a relative path, now I need to alter the code to use an absolute path on the server.
+
+Alter the location of env.py:
+
+<code>
+
+    # Import environment variables
+
+    if os.path.exists("/opt/gameapi/memory_game_api/env.py"):
+        from .env import *
+</code>
+
+Add my host to ALLOWED_HOSTS:
+
+<code>
+
+    ALLOWED_HOSTS = [
+        "dte-apps.com",
+    ]
+
+
+</code>
 
 Add code to settings.py as:
 
@@ -176,24 +199,97 @@ Add code to settings.py as:
 
 </code>
 
+Set the DEPLOYED flag to True, once deployed.
+
 </details>
 
-<details><summary>Create virtual environment inside the folder on the webserver</summary>
+<details><summary>2. Create virtual environment inside the folder on the webserver</summary>
 
 In PUTTy navigate to the folder where you want to trasfer the project to.
 
-The command for createing a virtual environment folder: virtualenv \<folder name>
+The command for createing a virtual environment folder: 
 
-The command for activating the virtual envronment : source venv/bin/activate
+<code>    
+    virtualenv venv
+</code>
+
+The command for activating the virtual envronment : 
+<code>
+    source venv/bin/activate
+</code>
 
 Now intall the dependencies:
 
 <code>
 
-    pip install psycopg2
-    pip install Pillow
-    pip install django-cors-headers
+    pip install djangorestframework
 
+    pip install markdown       # Markdown support for the browsable API.
+
+    pip install django-filter  # Filtering support
+
+    pip install psycopg2
+
+    pip install Pillow
+
+    pip install django-cors-headers
+</code>
+
+Deactivate the virtual environment:
+<code>
+    deactivate
 </code>
 
 </details>
+
+<details><summary>3. Copy the folder to the server</summary>
+
+Copy all the contents of the folder, except for the .env (virutal environment folder), to the folder that was created for the application on the server.
+
+</details>
+
+<details><summary>4. Create config file for apache2 webserver</summary>
+
+In /etc/apache2/conf-enabled/gameapi.conf
+
+<code>
+    WSGIDaemonProcess gameapi_app processes=1 threads=25 python-home=/opt/gameapi/venv lang='en_US.UTF-8' locale='en_US.UTF-8'
+    WSGIScriptAlias /gameapi /opt/gameapi/memory_game_api/wsgi.py
+
+    <Directory /opt/gameapi/memory_game_api>
+        WSGIProcessGroup gameapi_app 
+        WSGIApplicationGroup %{GLOBAL}   
+        Require all granted
+        <Files wsgi.py>
+            Require all granted
+        </Files>
+    </Directory>
+
+    <VirtualHost *:80>
+	    ServerName gameapi_media
+
+	    Alias /gameapi/media/ /opt/gameapi/media/	
+
+	    <Directory /opt/gameapi/media>
+		    Require all granted
+	    </Directory>	
+    </VirtualHost>
+
+</code>
+
+Now it is necessary to change the owner of the media folder to the user and user-group that is asociated with apache2.
+To see which user it is run the command :
+
+<code>
+    apache2ctl -S
+</code>
+
+On my system it is www-data:wwww:data
+
+So now I need to change the owner of the media folder:
+
+<code>
+    chown -R www-data:www-data media
+</code>
+
+</detials>
