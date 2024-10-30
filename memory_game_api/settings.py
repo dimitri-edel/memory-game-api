@@ -148,14 +148,22 @@ USE_I18N = True
 
 USE_TZ = True
 
-
+# Set this flag to True, when deploying to production
+DEPLOYED = False
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = "static/"
+if not DEPLOYED:
+    STATIC_URL = "static/"
+else:
+    STATIC_URL = "gameapi/static/"
 
 # Media files settings
-MEDIA_URL = '/media/'
+if not DEPLOYED:
+    MEDIA_URL = '/media/'
+else:
+    MEDIA_URL = 'gameapi/media/'
+
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type

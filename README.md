@@ -132,13 +132,49 @@ I decided to deploy this API on a VPS \(Ubuntu \/ appache2 Webserver)
 After obtaining the certifacte file and ssl private key from my provider I had to install them into the virtual hosts that are 
 intended to use them.
 
+Alter the file : **/etc/apache2/sites-available/default-ssl.conf**
+
+Add these lines to the virtual host:
+
+\<VirtualHost *:443>
+
+		ServerName dte-apps.com		
+		ServerAlias www.dte-apps.com
+
+		SSLEngine on
+		SSLCertificateFile /opt/ssl/dteapps.cer
+		SSLCertificateKeyFile /opt/ssl/key1.key
+
+        ...
+        
+\</VirtualHost>
+
 [website I used to find out how to install them on an apache2 webserver](https://www.ssldragon.com/how-to/install-ssl-certificate/ubuntu/#install-ubuntu)
 
 </details>
 
 <details><summary>Changing settings.py</summary>
 
+Add code to settings.py as:
 
+<code>
+
+
+    # Set this flag to True, when deploying to production
+    DEPLOYED = False
+
+    if not DEPLOYED:
+        STATIC_URL = "static/"
+    else:
+        STATIC_URL = "gameapi/static/"
+
+    if not DEPLOYED:
+        MEDIA_URL = '/media/'
+    else:
+        MEDIA_URL = 'gameapi/media/'
+
+
+</code>
 
 
 
