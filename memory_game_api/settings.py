@@ -14,7 +14,7 @@ from pathlib import Path
 import os
 
 # Import environment variables
-if os.path.exists("memory_game_api/env.py"):
+if os.path.exists("/opt/gamapi2/moemory-game-api/memory_game_api/env.py"):
     from .env import *
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
