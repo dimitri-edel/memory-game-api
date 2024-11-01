@@ -9,6 +9,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from game_admin.authentication import User
 import os
 from memory_game_api.settings import API_MEDIA_STORAGE
+from memory_game_api.settings import MEDIA_ROOT
 
 """ A class for retrieving all the items from the Playlist model
  and if a filter is passed in the url, it will return all the items
@@ -94,21 +95,21 @@ class PlaylistDeleteItemView(APIView):
         """Remove the associated files from the media folder"""
         try:
             # Delete the image and audio files from the media folder
-            media_image_path = os.path.join(os.getcwd(), "media", playlist.image.name)            
+            media_image_path = os.path.join(MEDIA_ROOT, "images", playlist.image.name)            
             if os.path.exists(media_image_path):
                 os.remove(media_image_path)
         except:
             pass
 
         try:
-            media_audio_path = os.path.join(os.getcwd(), "media", playlist.audio.name)            
+            media_audio_path = os.path.join(MEDIA_ROOT, "audio", playlist.audio.name)            
             if os.path.exists(media_audio_path):
                 os.remove(media_audio_path)
         except:
             pass
 
         try:
-            media_quiz_path = os.path.join(os.getcwd(), "media", playlist.quiz.name)
+            media_quiz_path = os.path.join(MEDIA_ROOT, "json", playlist.quiz.name)
             if os.path.exists(media_quiz_path):
                 os.remove(media_quiz_path)
         except:
