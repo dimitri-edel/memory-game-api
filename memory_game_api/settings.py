@@ -36,6 +36,10 @@ ALLOWED_HOSTS = [
     "127.0.0.1:5500",
 ]
 
+# If os.environ["DEPLOYED_HOSTNAME"] is set, add it to ALLOWED_HOSTS
+if "DEPLOYED_HOSTNAME" in os.environ:
+    ALLOWED_HOSTS.append(os.environ["DEPLOYED_HOSTNAME"])
+
 
 # Application definition
 

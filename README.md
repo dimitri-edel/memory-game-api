@@ -2,6 +2,7 @@
 The API is designed as the backend of the music-memory-game.
 
 Dependencies: (pip install those)
+djangorestframework
 psycopg2
 Pillow
 django-cors-headers
