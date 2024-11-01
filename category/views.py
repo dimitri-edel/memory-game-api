@@ -7,6 +7,7 @@ from .serializers import CategorySerializer
 from game_admin.authentication import User
 import os
 from memory_game_api.settings import API_MEDIA_STORAGE
+from memory_game_api.settings import MEDIA_ROOT
 
 ''' A class for retrieiving all the items from the Category model'''
 class CategoryGetAllView(APIView):
@@ -89,7 +90,7 @@ class CategoryDeleteView(APIView):
         # If the API_MEDIA_STORAGE (in settings.py) is set to MEDIA_FOLDER, delete the image file from the media folder
         if API_MEDIA_STORAGE == 'MEDIA_FOLDER':
             # Delete the image file from the media folder
-            media_path = os.path.join(os.getcwd(), 'media', category.image.name)
+            media_path = os.path.join(MEDIA_ROOT, 'images', category.image.name)
             if os.path.exists(media_path):
                 os.remove(media_path)
         return Response(status=status.HTTP_204_NO_CONTENT)
