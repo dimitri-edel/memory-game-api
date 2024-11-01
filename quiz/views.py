@@ -6,6 +6,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from game_admin.authentication import User
 import os
 from memory_game_api.settings import API_MEDIA_STORAGE
+from memory_game_api.settings import MEDIA_ROOT
 from .models import Quiz
 from .serializers import QuizSerializer
 
@@ -100,8 +101,7 @@ class QuizDeleteView(APIView):
 
         if API_MEDIA_STORAGE == 'MEDIA_FOLDER':
             '''If the quiz is deleted, delete the media file associated with the quiz'''
-            media_json_path = os.path.join(os.getcwd(), 'media', str(quiz.json))
-            print("Deleting media file atempt: ", media_json_path)
+            media_json_path = os.path.join(MEDIA_ROOT, str(quiz.json))            
             if os.path.exists(media_json_path):                
                 os.remove(media_json_path)
             else:
