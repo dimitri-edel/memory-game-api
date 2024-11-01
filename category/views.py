@@ -92,6 +92,7 @@ class CategoryDeleteView(APIView):
             # Delete the image file from the media folder
             media_path = os.path.join(MEDIA_ROOT, 'images', category.image.name)
             print("Deleting media_path: ", media_path)
+            print("Category image name: ", category.image.name)
             if os.path.exists(media_path):
                 os.remove(media_path)
         return Response(status=status.HTTP_204_NO_CONTENT)

@@ -96,7 +96,7 @@ class PlaylistDeleteItemView(APIView):
         try:
             # Delete the image and audio files from the media folder
             media_image_path = os.path.join(MEDIA_ROOT, "images", playlist.image.name)   
-            print("Deleting media_image_path: ", media_image_path)         
+            print("Deleting media_image_path: ", media_image_path)             
             if os.path.exists(media_image_path):
                 os.remove(media_image_path)
         except:
