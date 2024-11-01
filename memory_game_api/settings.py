@@ -166,9 +166,10 @@ else:
 
 # Media files settings
 if not DEPLOYED:
-    MEDIA_URL = '/media/'
+    MEDIA_URL = '/media/'    
 else:
     MEDIA_URL = 'gameapi/media/'
+    MEDIA_ROOT = '/opt/gameapi2/memory-game-api/media/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
