@@ -95,7 +95,7 @@ class PlaylistDeleteItemView(APIView):
         """Remove the associated files from the media folder"""
         try:
             # Delete the image and audio files from the media folder
-            media_image_path = os.path.join(MEDIA_ROOT, "images", playlist.image.name)   
+            media_image_path = os.path.join(MEDIA_ROOT, playlist.image.name)   
             print("Deleting media_image_path: ", media_image_path)             
             if os.path.exists(media_image_path):
                 os.remove(media_image_path)
@@ -103,21 +103,12 @@ class PlaylistDeleteItemView(APIView):
             pass
 
         try:
-            media_audio_path = os.path.join(MEDIA_ROOT, "audio", playlist.audio.name)      
+            media_audio_path = os.path.join(MEDIA_ROOT, playlist.audio.name)      
             print("Deleting media_audio_path: ", media_audio_path)      
             if os.path.exists(media_audio_path):
                 os.remove(media_audio_path)
         except:
             pass
-
-        try:
-            media_quiz_path = os.path.join(MEDIA_ROOT, "json", playlist.quiz.name)
-            print("Deleting media_quiz_path: ", media_quiz_path)
-            if os.path.exists(media_quiz_path):
-                os.remove(media_quiz_path)
-        except:
-            pass
-
 
 class PlaylistUpdateItemView(APIView):
     """Update view for Playlist model"""

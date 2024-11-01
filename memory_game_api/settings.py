@@ -14,7 +14,7 @@ from pathlib import Path
 import os
 
 # Import environment variables
-if os.path.exists("/opt/gameapi2/memory-game-api/memory_game_api/env.py"):
+if os.path.exists("/opt/gameapi2/memory-game-api/memory_game_api/env.py") or os.path.exists("memory_game_api/env.py"):
     print("Importing environment variables from env.py")
     from .env import *
 else:
