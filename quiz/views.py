@@ -26,6 +26,17 @@ class QuizListView(APIView):
             ) 
         quiz_serializer = QuizSerializer(quiz, many=True)
         return Response(quiz_serializer.data)
+    
+# Class for getting the quiz for a particular category
+class QuizGetByCategoryView(APIView):
+    '''Get method for Quiz model'''
+    def get(self, request, category):
+        if(request.META['HTTP_ORIGIN'] not in ALLOWED_CLIENT_HOSTS):
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        '''Get all items from the Quiz model'''
+        quiz = Quiz.objects.filter(category=category)
+        quiz_serializer = QuizSerializer(quiz, many=True)
+        return Response(quiz_serializer.data)
 
 ''' A class for adding a new quiz to the Quiz model.
     The user must be authorized to add a new quiz.

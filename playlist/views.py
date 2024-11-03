@@ -56,7 +56,7 @@ class PlaylistAddView(APIView):
         return Response(playlist_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class PlaylistGetView(APIView):
+class PlaylistGetByCategoryView(APIView):
     # get all items from playlist that are in the category that has been passed in the url
     def get(self, request, category):
         """Get method for Playlist model"""
