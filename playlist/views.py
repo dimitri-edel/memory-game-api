@@ -58,9 +58,9 @@ class PlaylistAddView(APIView):
 
 class PlaylistGetView(APIView):
     # get all items from playlist that are in the category that has been passed in the url
-    def get(self, request, category, api_key):
+    def get(self, request, category):
         """Get method for Playlist model"""
-        if api_key != os.environ["API_KEY"]:
+        if(request.META['HTTP_ORIGIN'] not in ALLOWED_CLIENT_HOSTS):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         playlist = Playlist.objects.filter(category=category)
         playlist_serializer = PlaylistSerializer(playlist, many=True)
