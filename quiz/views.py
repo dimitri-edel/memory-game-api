@@ -7,6 +7,7 @@ from game_admin.authentication import User
 import os
 from memory_game_api.settings import API_MEDIA_STORAGE
 from memory_game_api.settings import MEDIA_ROOT
+from memory_game_api.settings import ALLOWED_CLIENT_HOSTS
 from .models import Quiz
 from .serializers import QuizSerializer
 
@@ -15,7 +16,7 @@ from .serializers import QuizSerializer
 class QuizListView(APIView):
     '''Get method for Quiz model'''
     def get(self, request, filter, api_key):
-        if(api_key != os.environ["API_KEY"]):
+        if(request.META['HTTP_ORIGIN'] not in ALLOWED_CLIENT_HOSTS):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         '''Get all items from the Quiz model'''
         quiz = Quiz.objects.all()

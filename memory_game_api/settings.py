@@ -42,7 +42,10 @@ ALLOWED_HOSTS = [
 if "DEPLOYED_HOSTNAME" in os.environ:
     ALLOWED_HOSTS.append(os.environ["DEPLOYED_HOSTNAME"])
 
-
+ALLOWED_CLIENT_HOSTS = [
+    "http://127.0.0.1:5500",
+    "https://dimitri-edel.github.io",
+]
 # Application definition
 
 INSTALLED_APPS = [

@@ -10,6 +10,7 @@ from game_admin.authentication import User
 import os
 from memory_game_api.settings import API_MEDIA_STORAGE
 from memory_game_api.settings import MEDIA_ROOT
+from memory_game_api.settings import ALLOWED_CLIENT_HOSTS
 
 """ A class for retrieving all the items from the Playlist model
  and if a filter is passed in the url, it will return all the items
@@ -19,8 +20,8 @@ from memory_game_api.settings import MEDIA_ROOT
 class PlaylistGetAllView(APIView):
     """Get method for Playlist model"""
 
-    def get(self, request, filter, api_key):
-        if api_key != os.environ["API_KEY"]:
+    def get(self, request, filter):
+        if(request.META['HTTP_ORIGIN'] not in ALLOWED_CLIENT_HOSTS):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         """Get all items from the Playlist model"""
         playlist = Playlist.objects.all()

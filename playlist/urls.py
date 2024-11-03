@@ -8,7 +8,7 @@ from .views import PlaylistGetAllView
 
 
 urlpatterns = [   
-    path('get-all/<str:filter>/<str:api_key>', PlaylistGetAllView.as_view(), name='playlist_get_all'),
+    path('get-all/<str:filter>/', PlaylistGetAllView.as_view(), name='playlist_get_all'),
     path('add/', PlaylistAddView.as_view(), name='playlist_post'),
     path('get/<str:category>/<str:api_key>', PlaylistGetView.as_view(), name='playlist_get'),        
     path('delete/<int:id>/', PlaylistDeleteItemView.as_view(), name='playlist_delete_item'),
