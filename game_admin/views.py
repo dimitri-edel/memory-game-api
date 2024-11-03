@@ -11,9 +11,7 @@ The tokens are used to authenticate the user when they make requests to the API.
 '''
 class UserLoginView(APIView):
     '''Login view for User model'''
-    def post(self, request):
-        for item in request.META.items():
-            print(item)
+    def post(self, request):        
         '''Post method for User model'''
         username = request.data.get('username')
         password = request.data.get('password')
