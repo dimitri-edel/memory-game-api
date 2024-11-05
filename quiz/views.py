@@ -15,7 +15,7 @@ from .serializers import QuizSerializer
 # Class for view that gets a list of all the quizzes
 class QuizListView(APIView):
     '''Get method for Quiz model'''
-    def get(self, request, filter, api_key):
+    def get(self, request, filter):
         if(request.META['HTTP_ORIGIN'] not in ALLOWED_CLIENT_HOSTS):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         '''Get all items from the Quiz model'''
