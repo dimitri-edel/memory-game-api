@@ -42,9 +42,12 @@ class FileManager(APIView):
         image_folder = os.path.join(MEDIA_ROOT, 'images')
         audio_folder = os.path.join(MEDIA_ROOT, 'audio')
         json_folder = os.path.join(MEDIA_ROOT, 'json')
+        removed_files = []
+
         for file in all_files["images"]:
             if file not in used_files["images"]:
                 print("removing : ", file)
+                removed_files.append(str(file))
                 print(os.path.getsize(os.path.join(image_folder, file)))
                 os.remove(os.path.join(image_folder, file))
             else:
@@ -54,6 +57,7 @@ class FileManager(APIView):
         for file in all_files["audio"]:
             if file not in used_files["audio"]:
                 print("removing : ", file)
+                removed_files.append(str(file))
                 print(os.path.getsize(os.path.join(audio_folder, file)))
                 os.remove(os.path.join(audio_folder, file))
             else:
@@ -63,13 +67,14 @@ class FileManager(APIView):
         for file in all_files["json"]:
             if file not in used_files["json"]:
                 print("removing : ", file)
+                removed_files.append(str(file))
                 print(os.path.getsize(os.path.join(json_folder, file)))
                 os.remove(os.path.join(json_folder, file))
             else:
                 print("keeping : ", file)
                 print(os.path.getsize(os.path.join(json_folder, file)))
 
-        return Response(used_files, status=status.HTTP_200_OK)
+        return Response(removed_files, status=status.HTTP_200_OK)
     
     def _get_list_of_all_files(self):
         '''Get list of all files in the images folder'''
