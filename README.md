@@ -81,6 +81,10 @@ So the functions were removed and the Copilot suggested to override the delete m
 
     # Override the delete method to delete the image file from the storage
     def delete(self, *args, **kwargs):
+        # Get the Quiz and Playlist models dynamically
+        Quiz = apps.get_model('quiz', 'Quiz')
+        Playlist = apps.get_model('playlist', 'Playlist')
+        
         # Delete related quizzes
         quizzes = Quiz.objects.filter(category=self)
         for quiz in quizzes:
