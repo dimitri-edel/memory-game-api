@@ -33,7 +33,19 @@ django-cors-headers
 
 ### Quiz Admin
 
+## BUGS AND ISSUES
 
+### Issue #1
+<details><summary>When deleting models, files reamain undeleted</summary>
+My first approach putting code inside view classes that handle the DELETE method.
+This method has been proved anadequate, because it did not include the PUT method and the CASCADE policy.
+
+### SOLUTION
+
+- 1. Create a script that will delete all unused files
+- 2. Upon deleting unused files, override the delete and save methods on the model classes. Let the delete and save methods remove the files from the filesystem prior to updating the model and saving the new files.
+
+<details>
 
 
 
