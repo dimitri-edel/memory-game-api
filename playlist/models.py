@@ -1,7 +1,7 @@
 from django.db import models
 from django.core.validators import FileExtensionValidator
 from category.models import Category
-from django.db.models.signals import pre_delete
+from django.db.models.signals import post_delete
 from django.dispatch import receiver
 
 # Model class for playlist that is related to category model using foreign key one category to many playlists relationship 
@@ -45,7 +45,7 @@ class Playlist(models.Model):
         super(Playlist, self).save(*args, **kwargs)
 
 # Signal to delete associated files when a Category is deleted
-@receiver(pre_delete, sender=Category)
+@receiver(post_delete, sender=Category)
 def delete_related_files(sender, instance, **kwargs):
     playlists = Playlist.objects.filter(category=instance)
     for playlist in playlists:
