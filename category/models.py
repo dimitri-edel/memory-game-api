@@ -1,5 +1,7 @@
 from django.db import models
 from django.core.validators import FileExtensionValidator
+from quiz.models import Quiz
+from playlist.models import Playlist  # Import Playlist model
 
 # Model class for category
 class Category(models.Model):
@@ -23,6 +25,16 @@ class Category(models.Model):
     
     # Override the delete method to delete the image file from the storage
     def delete(self, *args, **kwargs):
+        # Delete related quizzes
+        quizzes = Quiz.objects.filter(category=self)
+        for quiz in quizzes:
+            quiz.delete()
+        
+        # Delete related playlists
+        playlists = Playlist.objects.filter(category=self)
+        for playlist in playlists:
+            playlist.delete()
+        
         self.image.delete()
         super().delete(*args, **kwargs)
 

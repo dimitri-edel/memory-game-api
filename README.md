@@ -45,10 +45,58 @@ This method has been proved anadequate, because it did not include the PUT metho
 - 1. Create a script that will delete all unused files
 - 2. Upon deleting unused files, override the delete and save methods on the model classes. Let the delete and save methods remove the files from the filesystem prior to updating the model and saving the new files.
 
+models.ForeignKey(Category, on_delete=models.CASCADE) begins a transaction once the category is deleted. The transaction does not seem to use the delete()-method on the model. 
+
+I have tried to use Signal to achieve the deletion of the related files, but to no avail. First, I tried pre_delete. But the server threw an exception that this interfered with a transaction. The files got deleted yet some of the related models remained.
+
+<code>
+
+    # Signal to delete associated files when a Category is deleted
+    @receiver(pre_delete, sender=Category)
+    def delete_related_files(sender, instance, **kwargs):
+        playlists = Playlist.objects.filter(category=instance)
+        for playlist in playlists:
+            playlist.audio.delete()
+            playlist.image.delete()
+
+</code>
+
+Then I tried post_delete, but the files remained in place, which is understandable. Since, the category was deleted. However, it was a suggestion by the Copilot, which I accepted without even giving it any thought.
+
+<code>
+
+    # Signal to delete associated files when a Category is deleted
+    @receiver(post_delete, sender=Category)
+    def delete_related_files(sender, instance, **kwargs):
+        playlists = Playlist.objects.filter(category=instance)
+        for playlist in playlists:
+            playlist.audio.delete()
+            playlist.image.delete()
+
+</code>
+
+So the functions were removed and the Copilot suggested to override the delete method on the Category model instead. 
+
+<code>
+
+    # Override the delete method to delete the image file from the storage
+    def delete(self, *args, **kwargs):
+        # Delete related quizzes
+        quizzes = Quiz.objects.filter(category=self)
+        for quiz in quizzes:
+            quiz.delete()
+        
+        # Delete related playlists
+        playlists = Playlist.objects.filter(category=self)
+        for playlist in playlists:
+            playlist.delete()
+        
+        self.image.delete()
+        super().delete(*args, **kwargs)
+
+</code>
+
 <details>
-
-
-
 
 
 ## AUTOMATED TESTS
