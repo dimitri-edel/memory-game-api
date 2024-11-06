@@ -20,3 +20,17 @@ class Category(models.Model):
     # Methods
     def __str__(self):
         return self.name
+    
+    # Override the delete method to delete the image file from the storage
+    def delete(self, *args, **kwargs):
+        self.image.delete()
+        super().delete(*args, **kwargs)
+
+    # Override the save method to delete the old image file from the storage
+    def save(self, *args, **kwargs):
+        try:
+            this = Category.objects.get(id=self.id)
+            if this.image != self.image:
+                this.image.delete()
+        except: pass
+        super(Category, self).save(*args, **kwargs)
