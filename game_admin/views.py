@@ -32,6 +32,12 @@ class FileManager(APIView):
     ''' View for managing files that are used by the game'''
     def get(self, request):
         '''Get method for FileManager'''
+        token1 = request.headers.get('Token1')
+        token2 = request.headers.get('Token2')
+        user = User()
+        if not user.is_authorized(token1, token2):
+            return Response(status=status.HTTP_401_UNAUTHORIZED)      
+        
         used_files = {"images" : [], "audio" : [], "json" : []}
         all_files = self._get_list_of_all_files()
         self._get_list_of_used_files(used_files["images"], used_files["audio"], used_files["json"])
