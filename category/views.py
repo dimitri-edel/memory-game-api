@@ -87,11 +87,5 @@ class CategoryDeleteView(APIView):
         except Category.DoesNotExist:
         # If the category does not exist return a 404 response        
             return Response(status=status.HTTP_404_NOT_FOUND)
-        category.delete()
-        # If the API_MEDIA_STORAGE (in settings.py) is set to MEDIA_FOLDER, delete the image file from the media folder
-        if API_MEDIA_STORAGE == 'MEDIA_FOLDER':
-            # Delete the image file from the media folder
-            media_path = os.path.join(MEDIA_ROOT, category.image.name)            
-            if os.path.exists(media_path):
-                os.remove(media_path)
+        category.delete()        
         return Response(status=status.HTTP_204_NO_CONTENT)
