@@ -22,4 +22,18 @@ class Quiz(models.Model):
     # Methods
     def __str__(self):
         return self.title
+    
+    # Override delete method to delete the json file from the storage
+    def delete(self, *args, **kwargs):
+        self.json.delete()
+        super().delete(*args, **kwargs)
+
+    # Override save method to delete the json file from the storage
+    def save(self, *args, **kwargs):
+        try:
+            this = Quiz.objects.get(id=self.id)
+            if this.json != self.json:
+                this.json.delete()
+        except: pass
+        super(Quiz, self).save(*args, **kwargs)
 
