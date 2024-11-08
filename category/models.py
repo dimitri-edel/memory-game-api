@@ -27,6 +27,7 @@ class Category(models.Model):
         # Get the Quiz and Playlist models dynamically
         Quiz = apps.get_model('quiz', 'Quiz')
         Playlist = apps.get_model('playlist', 'Playlist')
+        Face = apps.get_model('face', 'Face')
         
         # Delete related quizzes
         quizzes = Quiz.objects.filter(category=self)
@@ -37,6 +38,11 @@ class Category(models.Model):
         playlists = Playlist.objects.filter(category=self)
         for playlist in playlists:
             playlist.delete()
+
+        # Delete related faces
+        faces = Face.objects.filter(category=self)
+        for face in faces:
+            face.delete()
         
         self.image.delete()
         super().delete(*args, **kwargs)
