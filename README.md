@@ -33,6 +33,18 @@ django-cors-headers
 
 ### Quiz Admin
 
+### Face API
+
+Delivers images that are used for displaying the cubes of the game. The image is used for the cube's front-side, that the user sees before clickig on it.
+
+### Face Admin
+
+### Style API
+
+Style Api delivers a set of styles for the webpage based on the chosen category. The following styles are avaailable: primary-color, secondary-color, complementary-color, background-image.
+
+### Style Admin
+
 ## BUGS AND ISSUES
 
 ### Issue #1

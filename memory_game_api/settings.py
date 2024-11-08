@@ -58,7 +58,8 @@ INSTALLED_APPS = [
     "corsheaders",
     "category",
     "playlist", 
-    "quiz",   
+    "quiz", 
+    "face",
 ]
 
 MIDDLEWARE = [
