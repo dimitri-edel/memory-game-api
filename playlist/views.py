@@ -7,9 +7,6 @@ from .models import Playlist
 from .serializers import PlaylistSerializer
 from rest_framework.parsers import MultiPartParser, FormParser
 from game_admin.authentication import User
-import os
-from memory_game_api.settings import API_MEDIA_STORAGE
-from memory_game_api.settings import MEDIA_ROOT
 from memory_game_api.settings import ALLOWED_CLIENT_HOSTS
 
 """ A class for retrieving all the items from the Playlist model
@@ -86,30 +83,8 @@ class PlaylistDeleteItemView(APIView):
         except Playlist.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-        playlist.delete()
-        """ If the API_MEDIA_STORAGE (in settings.py) is set to MEDIA_FOLDER, delete the image and audio files from the media folder"""
-        if API_MEDIA_STORAGE == "MEDIA_FOLDER":
-            self.remove_associated_files(playlist)
+        playlist.delete()        
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-    def remove_associated_files(self, playlist):
-        """Remove the associated files from the media folder"""
-        try:
-            # Delete the image and audio files from the media folder
-            media_image_path = os.path.join(MEDIA_ROOT, playlist.image.name)   
-            print("Deleting media_image_path: ", media_image_path)             
-            if os.path.exists(media_image_path):
-                os.remove(media_image_path)
-        except:
-            pass
-
-        try:
-            media_audio_path = os.path.join(MEDIA_ROOT, playlist.audio.name)      
-            print("Deleting media_audio_path: ", media_audio_path)      
-            if os.path.exists(media_audio_path):
-                os.remove(media_audio_path)
-        except:
-            pass
 
 class PlaylistUpdateItemView(APIView):
     """Update view for Playlist model"""

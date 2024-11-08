@@ -4,9 +4,6 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.parsers import MultiPartParser, FormParser
 from game_admin.authentication import User
-import os
-from memory_game_api.settings import API_MEDIA_STORAGE
-from memory_game_api.settings import MEDIA_ROOT
 from memory_game_api.settings import ALLOWED_CLIENT_HOSTS
 from .models import Quiz
 from .serializers import QuizSerializer
@@ -110,14 +107,6 @@ class QuizDeleteView(APIView):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         
         quiz = Quiz.objects.get(id=id)
-
-        if API_MEDIA_STORAGE == 'MEDIA_FOLDER':
-            '''If the quiz is deleted, delete the media file associated with the quiz'''
-            media_json_path = os.path.join(MEDIA_ROOT, str(quiz.json))            
-            if os.path.exists(media_json_path):                
-                os.remove(media_json_path)
-            else:
-                print("The file does not exist")
         '''Delete the quiz'''
         quiz.delete()
         '''Return a 204 no content response'''
