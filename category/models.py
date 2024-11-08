@@ -28,6 +28,7 @@ class Category(models.Model):
         Quiz = apps.get_model('quiz', 'Quiz')
         Playlist = apps.get_model('playlist', 'Playlist')
         Face = apps.get_model('face', 'Face')
+        Style = apps.get_model('style', 'Style')
         
         # Delete related quizzes
         quizzes = Quiz.objects.filter(category=self)
@@ -43,6 +44,11 @@ class Category(models.Model):
         faces = Face.objects.filter(category=self)
         for face in faces:
             face.delete()
+
+        # Delete related styles
+        styles = Style.objects.filter(category=self)
+        for style in styles:
+            style.delete()
         
         self.image.delete()
         super().delete(*args, **kwargs)
