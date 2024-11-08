@@ -2,6 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Style
+from category.models import Category
 from .serializers import StyleSerializer
 from game_admin.authentication import User
 from memory_game_api.settings import ALLOWED_CLIENT_HOSTS
@@ -15,6 +16,18 @@ class StyleList(APIView):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         styles = Style.objects.all()
         serializer = StyleSerializer(styles, many=True)
+        return Response(serializer.data)
+
+# View for getting a style baded on category id
+class StyleByCategory(APIView):
+    '''View for getting a style based on category id'''
+    def get(self, request, category_id):
+        '''Get request for getting a style based on category id'''
+        if(request.META['HTTP_ORIGIN'] not in ALLOWED_CLIENT_HOSTS):
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        category = Category.objects.get(id=category_id)
+        style = Style.objects.get(category=category).first()
+        serializer = StyleSerializer(style)
         return Response(serializer.data)
 
 # class for creating a new style
