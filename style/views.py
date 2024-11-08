@@ -41,14 +41,11 @@ class StyleCreate(APIView):
         token2 = request.headers.get('Token2')
         user = User()
         if not user.is_authorized(token1, token2):
-            return Response(status=status.HTTP_401_UNAUTHORIZED)      
-        print("submitted data: ", request.data)  
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
         serializer = StyleSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        # print the errors if the serializer is not valid
-        print("errors: ", serializer.errors)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)        
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 # class for updating a style
