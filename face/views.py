@@ -56,3 +56,19 @@ class FaceUpdate(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# class for deleting a face
+class FaceDelete(APIView):
+    '''View for deleting a face'''
+    def delete(self, request, id):
+        '''Delete request for deleting a face'''
+        # Get token1 and token2 from the request headers
+        # If the tokens are not valid, return a access denied response
+        token1 = request.headers.get('Token1')
+        token2 = request.headers.get('Token2')
+        user = User()
+        if not user.is_authorized(token1, token2):
+            return Response(status=status.HTTP_401_UNAUTHORIZED)        
+        face = Face.objects.get(id=id)
+        face.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
