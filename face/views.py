@@ -40,7 +40,12 @@ class FaceCreate(APIView):
         token2 = request.headers.get('Token2')
         user = User()
         if not user.is_authorized(token1, token2):
-            return Response(status=status.HTTP_401_UNAUTHORIZED)        
+            return Response(status=status.HTTP_401_UNAUTHORIZED)      
+        # If the style for this category already exists, return a 409 conflict response status
+        category = Category.objects.get(id=request.data['category'])
+        if Face.objects.filter(category=category, style=request.data['style']).exists():
+            return Response(status=status.HTTP_409_CONFLICT)
+        
         serializer = FaceSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
