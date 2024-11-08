@@ -8,7 +8,7 @@ class Face(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     
     def __str__(self):
-        return self.name
+        return "face for " + self.category.name
     
     def delete(self, *args, **kwargs):
         self.image.delete()

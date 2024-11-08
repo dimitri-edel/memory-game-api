@@ -24,7 +24,7 @@ class Style(models.Model):
     
     # Methods
     def __str__(self):
-        return self.name
+        return "style for " + self.category.name
     
     # Override the delete method to delete the image file from the storage
     def delete(self, *args, **kwargs):
