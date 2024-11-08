@@ -34,3 +34,22 @@ class StyleCreate(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+# class for updating a style
+class StyleUpdate(APIView):
+    '''View for updating a style'''
+    def put(self, request, id):
+        '''Put request for updating a style'''
+        # Get token1 and token2 from the request headers
+        # If the tokens are not valid, return a access denied response
+        token1 = request.headers.get('Token1')
+        token2 = request.headers.get('Token2')
+        user = User()
+        if not user.is_authorized(token1, token2):
+            return Response(status=status.HTTP_401_UNAUTHORIZED)        
+        style = Style.objects.get(id=id)
+        serializer = StyleSerializer(style, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
