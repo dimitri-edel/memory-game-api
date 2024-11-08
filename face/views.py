@@ -19,3 +19,21 @@ class FaceList(APIView):
         faces = Face.objects.all()
         serializer = FaceSerializer(faces, many=True)
         return Response(serializer.data)
+
+# class for creating a new face
+class FaceCreate(APIView):
+    '''View for creating a new face'''
+    def post(self, request, format=None):
+        '''Post request for creating a new face'''
+        # Get token1 and token2 from the request headers
+        # If the tokens are not valid, return a access denied response
+        token1 = request.headers.get('Token1')
+        token2 = request.headers.get('Token2')
+        user = User()
+        if not user.is_authorized(token1, token2):
+            return Response(status=status.HTTP_401_UNAUTHORIZED)        
+        serializer = FaceSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
