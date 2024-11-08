@@ -26,6 +26,7 @@ urlpatterns = [
     path('game_admin/', include('game_admin.urls')),
     path('quiz/', include('quiz.urls')),
     path('face/', include('face.urls')),
+    path('style/', include('style.urls')),
 ]
 
 if settings.DEBUG:
