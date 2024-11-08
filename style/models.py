@@ -5,11 +5,11 @@ from category.models import Category
 # Class for stroing styles for a category
 class Style(models.Model):
     # Fields
-    primary_color = models.CharField(max_length=7)
+    primary_color = models.CharField(max_length=9)
     '''primary color of the style'''
-    secondary_color = models.CharField(max_length=7)
+    secondary_color = models.CharField(max_length=9)
     '''secondary color of the style'''
-    complementary_color = models.CharField(max_length=7)
+    complementary_color = models.CharField(max_length=9)
     '''complementary color of the style'''
     background_image = models.ImageField(upload_to="styles", validators=[FileExtensionValidator(allowed_extensions=["jpg", "jpeg", "png"])])
     '''background image of the style'''
