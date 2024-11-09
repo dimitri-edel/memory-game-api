@@ -72,6 +72,8 @@ class StyleUpdate(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
+        else:
+            print(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # class for deleting a style
