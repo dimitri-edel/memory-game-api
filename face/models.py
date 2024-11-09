@@ -4,7 +4,7 @@ from category.models import Category
 
 # Class for storing images of faces
 class Face(models.Model):    
-    image = models.ImageField(upload_to="faces", validators=[FileExtensionValidator(allowed_extensions=["jpg", "jpeg", "png"])])
+    image = models.ImageField(upload_to="faces", validators=[FileExtensionValidator(allowed_extensions=["jpg", "jpeg", "png", "webp", "gif"])])
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     
     def __str__(self):
