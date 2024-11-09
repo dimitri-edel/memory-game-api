@@ -42,6 +42,11 @@ class StyleCreate(APIView):
         user = User()
         if not user.is_authorized(token1, token2):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
+        # if a style for the same category already exists, return a 409 conflict response
+        category = Category.objects.get(id=request.data['category'])
+        if Style.objects.filter(category=category).exists():
+            return Response(status=status.HTTP_409_CONFLICT)
+        # if the data is valid, save the style and return a 201 created response
         serializer = StyleSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
