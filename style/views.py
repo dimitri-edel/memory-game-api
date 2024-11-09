@@ -20,13 +20,15 @@ class StyleList(APIView):
 
 # View for getting a style baded on category id
 class StyleByCategory(APIView):
-    '''View for getting a style based on category id'''
+    '''View for getting a style based on category id''' 
     def get(self, request, category_id):
         '''Get request for getting a style based on category id'''
+        print("HTTP_ORIGIN : ")
+        print(request.META['HTTP_ORIGIN'])
         if(request.META['HTTP_ORIGIN'] not in ALLOWED_CLIENT_HOSTS):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         category = Category.objects.get(id=category_id)
-        style = Style.objects.get(category=category).first()
+        style = Style.objects.get(category=category)
         serializer = StyleSerializer(style)
         return Response(serializer.data)
 
